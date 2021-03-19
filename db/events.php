@@ -26,21 +26,8 @@ defined('MOODLE_INTERNAL') || die();
 $observers = array(
 
     array(
-        'eventname' => '*',
-        'callback' => '\tool_leeloolxp_sync\syncobserver::badge_createdd',
-    ),
-    array(
-        'eventname' => 'core\event\badge_criteria_created',
-        'callback' => '\tool_leeloolxp_sync\syncobserver::badge_criteria_createdd',
-    ),
-    array(
-        'eventname' => '\core\event\course_module_viewed',
-        'callback' => '\tool_leeloolxp_sync\syncobserver::viewed_activity',
-    ),
-
-    array(
-        'eventname' => '\core\event\group_member_added',
-        'callback' => '\tool_leeloolxp_sync\syncobserver::group_member_added',
+        'eventname' => '\core\event\course_module_completion_updated',
+        'callback' => '\tool_leeloolxp_sync\syncobserver::completion_updated',
     ),
 
     array(
@@ -49,17 +36,12 @@ $observers = array(
     ),
 
     array(
+        'eventname' => '\core\event\group_member_added',
+        'callback' => '\tool_leeloolxp_sync\syncobserver::group_member_added',
+    ),
+
+    array(
         'eventname' => '\core\event\role_assigned',
         'callback' => '\tool_leeloolxp_sync\syncobserver::role_assign',
-    ),
-
-    array(
-        'eventname' => '\core\event\course_module_completion_updated',
-        'callback' => '\tool_leeloolxp_sync\syncobserver::completion_updated',
-    ),
-
-    array(
-        'eventname' => 'core\event\course_category_deleted',
-        'callback' => '\tool_leeloolxp_sync\syncobserver::course_category_delete',
     ),
 );
