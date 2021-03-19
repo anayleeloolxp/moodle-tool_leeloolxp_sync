@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="admin/tool/leeloolxp_sync/db" VERSION="20141103" COMMENT="XMLDB file for Moodle tool/leeloolxp_sync"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd">
+    <TABLES>
+    <TABLE NAME="tool_leeloolxp_sync" COMMENT="Table to store leeloolxp_sync">
+    <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Id of course to which this rule belongs."/>
+        <FIELD NAME="sectionid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Id of section to which this rule belongs."/>
+        <FIELD NAME="activityid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Id of activity to which this rule belongs."/>
+        <FIELD NAME="enabled" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Flag"/>
+        <FIELD NAME="teamnio_task_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="task id"/>
+        <FIELD NAME="is_quiz" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="is quiz tracking id"/>
+    </FIELDS>
+    <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+    </KEYS>
+    <INDEXES>
+        <INDEX NAME="courseid" UNIQUE="false" FIELDS="courseid" COMMENT="Index on courseid"/>
+    </INDEXES>
+    </TABLE></TABLES>
+    </XMLDB>
