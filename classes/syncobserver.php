@@ -396,7 +396,7 @@ class syncobserver {
 
         'degree' and {user_info_data}.userid = ?", [$user->id]);
 
-        $userdegreename = $userdegree->data;
+        $userdegreename = @$userdegree->data;
 
         $userdepartment = $user->department;
 
