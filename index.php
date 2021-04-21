@@ -998,7 +998,7 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
         }
     }
 
-    $urltogo = $CFG->wwwroot . '/course/view.php?id=' . $courseidagain . '&sync=1';
+    $urltogo = $CFG->wwwroot . '/course/view.php?id=' . $reqcourseid1 . '&sync=1';
     redirect($urltogo);
 }
 
