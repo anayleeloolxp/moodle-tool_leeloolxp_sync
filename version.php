@@ -24,10 +24,10 @@
  */
 defined('MOODLE_INTERNAL') || die();
 $plugin = new stdClass();
-$plugin->version = 2021042100; // The current plugin version (Date: YYYYMMDDXX).
+$plugin->version = 2021061700; // The current plugin version (Date: YYYYMMDDXX).
 $plugin->requires = 2014111001; // Requires this Moodle version.
 $plugin->component = 'tool_leeloolxp_sync'; // Full name of the plugin (used for diagnostics).
-$plugin->release = '1.0.9';
+$plugin->release = '1.1.0';
 $plugin->maturity = MATURITY_STABLE;
 $plugin->dependencies = array(
     'auth_leeloolxp_tracking_sso' => 2021030101,

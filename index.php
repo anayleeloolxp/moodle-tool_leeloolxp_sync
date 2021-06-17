@@ -313,7 +313,7 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
                                                     $activityenddatess = $coursedetails->enddate;
                                                 }
                                             }
-                                        } else if ($tbl == 'wespher') {
+                                        } else if ($tbl == 'leeloolxpvc') {
                                             if ($valuefinal->timeopen != 0) {
                                                 $activitystartdates = $valuefinal->timeopen;
                                             } else {
@@ -1210,7 +1210,7 @@ if (isset($reqresyncactivity)) {
                                                         $activityenddates = $coursedetails->enddate;
                                                     }
                                                 }
-                                            } else if ($tbll == 'wespher') {
+                                            } else if ($tbll == 'leeloolxpvc') {
                                                 if ($valuefinal->timeopen != 0) {
                                                     $activitystartdates = $valuefinal->timeopen;
                                                 } else {
@@ -1543,7 +1543,7 @@ if (isset($reqresync)) {
                                                     $activityenddates = $coursedetails->enddate;
                                                 }
                                             }
-                                        } else if ($tbl == 'wespher') {
+                                        } else if ($tbl == 'leeloolxpvc') {
                                             if ($valuefinal->timeopen != 0) {
                                                 $activitystartdates = $valuefinal->timeopen;
                                             } else {
@@ -2696,7 +2696,7 @@ if (isset($reqaction)) {
                                                         $activityenddatess = $coursedetails->enddate;
                                                     }
                                                 }
-                                            } else if ($tbl == 'wespher') {
+                                            } else if ($tbl == 'leeloolxpvc') {
                                                 if ($valuefinal->timeopen != 0) {
                                                     $activitystartdates = $valuefinal->timeopen;
                                                 } else {
