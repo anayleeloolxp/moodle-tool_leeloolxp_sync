@@ -714,6 +714,8 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
 
                         'user_type' => $usertype,
 
+                        'userrole' => $userrole,
+
                         'designation_id' => $userdesignation,
 
                         'enrol' => $moodeluservalue->enrolmethod,
@@ -794,6 +796,8 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
                             'user_approval' => $userapproval,
 
                             'user_type' => $usertype,
+
+                            'userrole' => $userrole,    
 
                             'designation_id' => $userdesignation,
 
@@ -2043,6 +2047,8 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
 
                         'user_type' => $usertype,
 
+                        'userrole' => $userrole,
+
                         'designation_id' => $userdesignation,
 
                         'enrol' => $moodeluservalue->enrolmethod,
@@ -2123,6 +2129,8 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
                             'user_approval' => $userapproval,
 
                             'user_type' => $usertype,
+
+                            'userrole' => $userrole,    
 
                             'designation_id' => $userdesignation,
 
