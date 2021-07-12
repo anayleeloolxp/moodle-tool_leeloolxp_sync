@@ -94,7 +94,7 @@ class syncobserver {
 
         global $CFG;
 
-        require_once ($CFG->dirroot . '/lib/filelib.php');
+        require_once($CFG->dirroot . '/lib/filelib.php');
 
         $moduleid = $event->contextinstanceid;
 
@@ -146,7 +146,7 @@ class syncobserver {
 
         global $CFG;
 
-        require_once ($CFG->dirroot . '/lib/filelib.php');
+        require_once($CFG->dirroot . '/lib/filelib.php');
 
         $user = core_user::get_user($data['relateduserid'], '*', MUST_EXIST);
 
@@ -298,7 +298,7 @@ class syncobserver {
 
         global $CFG;
 
-        require_once ($CFG->dirroot . '/lib/filelib.php');
+        require_once($CFG->dirroot . '/lib/filelib.php');
 
         $group = $events->get_record_snapshot('groups', $events->objectid);
 
@@ -347,7 +347,7 @@ class syncobserver {
 
         global $CFG;
 
-        require_once ($CFG->dirroot . '/lib/filelib.php');
+        require_once($CFG->dirroot . '/lib/filelib.php');
 
         $snapshotid = $enrolmentdata->get_data()['other']['id'];
 
@@ -655,7 +655,7 @@ class syncobserver {
         global $CFG;
         global $DB;
 
-        require_once ($CFG->dirroot . '/lib/filelib.php');
+        require_once($CFG->dirroot . '/lib/filelib.php');
 
         $eventdata = $events->get_data();
         $alldetail = json_encode($eventdata);
@@ -749,7 +749,7 @@ class syncobserver {
                 foreach ($userroles as $key => $value) {
                     if ($value->shortname == "teacher") {
                         $rolenames .= 'non editing teacher,';
-                    } elseif ($value->shortname == "editingteacher") {
+                    } else if ($value->shortname == "editingteacher") {
                         $rolenames .= 'teacher,';
                     } else {
                         $rolenames .= $value->shortname . ',';
@@ -872,7 +872,7 @@ class syncobserver {
                 $forumgradedata = $DB->get_record_sql($sql, [$eventdata['objectid'], $eventdata['other']['itemid'], $eventdata['relateduserid']]);
 
                 $url = $teamniourl . '/admin/sync_moodle_course/insert_grade_history';
-            } elseif (!empty($forumgradedata)) {
+            } else if (!empty($forumgradedata)) {
 
                 $sql = "SELECT * FROM {course_modules} where course = ? AND module = ? AND instance = ? ";
                 $forummodule = $DB->get_record_sql($sql, [$eventdata['courseid'], '9', $itemdata->iteminstance]);
@@ -904,7 +904,7 @@ class syncobserver {
 
             $userid = $eventdata['userid'];
             $quizid = $eventdata['other']['quizid'];
-            $activity_id = $eventdata['contextinstanceid'];
+            $activityid = $eventdata['contextinstanceid'];
 
             $sql = "SELECT email FROM {user} where id = ?";
             $userdetail = $DB->get_record_sql($sql, [$userid]);
@@ -915,16 +915,16 @@ class syncobserver {
             $sql = "SELECT gradepass FROM {grade_items} where iteminstance = ? and courseid = ? ";
             $argrade = $DB->get_record_sql($sql, [$quizdata->lessonid, $eventdata['courseid']]);
 
-            $pass_fail = 'passed';
+            $passfail = 'passed';
 
             if (!empty($argrade) && !empty($argrade->gradepass)) {
-                $pass_fail = 'failed';
+                $passfail = 'failed';
                 if ($lessionrec->grade >= $argrade->gradepass) {
-                    $pass_fail = 'passed';
+                    $passfail = 'passed';
                 }
             }
 
-            $postdataquizgrade = '&quizdata=' . json_encode($quizdata) . '&activity_id=' . json_encode($activity_id) . '&email=' . base64_encode($userdetail->email) . '&gradedby=' . base64_encode($USER->email);
+            $postdataquizgrade = '&quizdata=' . json_encode($quizdata) . '&activity_id=' . json_encode($activityid) . '&email=' . base64_encode($userdetail->email) . '&gradedby=' . base64_encode($USER->email);
 
             $url = $teamniourl . '/admin/sync_moodle_course/update_grade_quiz_grade';
             $curl = new curl;
@@ -951,16 +951,16 @@ class syncobserver {
             $sql = "SELECT gradepass FROM {grade_items} where iteminstance = ? and courseid = ? ";
             $argrade = $DB->get_record_sql($sql, [$lessionrec->lessonid, $eventdata['courseid']]);
 
-            $pass_fail = 'passed';
+            $passfail = 'passed';
 
             if (!empty($argrade) && !empty($argrade->gradepass)) {
-                $pass_fail = 'failed';
+                $passfail = 'failed';
                 if ($lessionrec->grade >= $argrade->gradepass) {
-                    $pass_fail = 'passed';
+                    $passfail = 'passed';
                 }
             }
 
-            $postdatalessiongrade = '&lession_grade_data=' . $lessiongradedata . '&grade=' . json_encode($lessionrec->grade) . '&late=' . json_encode($lessionrec->late) . '&completed=' . json_encode($lessionrec->completed) . '&email=' . base64_encode($userdetail->email) . '&gradedby=' . base64_encode($USER->email) . '&pass_fail=' . json_encode($pass_fail);
+            $postdatalessiongrade = '&lession_grade_data=' . $lessiongradedata . '&grade=' . json_encode($lessionrec->grade) . '&late=' . json_encode($lessionrec->late) . '&completed=' . json_encode($lessionrec->completed) . '&email=' . base64_encode($userdetail->email) . '&gradedby=' . base64_encode($USER->email) . '&pass_fail=' . json_encode($passfail);
 
             $url = $teamniourl . '/admin/sync_moodle_course/update_grade_lession_grade';
             $curl = new curl;
@@ -1078,9 +1078,9 @@ class syncobserver {
         $output = $curl->post($url, $postdata, $options);
 
         if (!empty($output)) {
-            $output_arr = explode('&', $output);
-            $_SESSION['gradegradesid'] = $output_arr[0];
-            $_SESSION['gradehistoryid'] = $output_arr[1];
+            $outputarr = explode('&', $output);
+            $_SESSION['gradegradesid'] = $outputarr[0];
+            $_SESSION['gradehistoryid'] = $outputarr[1];
         }
     }
 }

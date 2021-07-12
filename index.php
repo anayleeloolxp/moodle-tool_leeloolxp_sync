@@ -797,7 +797,7 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
 
                             'user_type' => $usertype,
 
-                            'userrole' => $userrole,    
+                            'userrole' => $userrole,
 
                             'designation_id' => $userdesignation,
 
@@ -2130,7 +2130,7 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
 
                             'user_type' => $usertype,
 
-                            'userrole' => $userrole,    
+                            'userrole' => $userrole,
 
                             'designation_id' => $userdesignation,
 
