@@ -44,4 +44,19 @@ $observers = array(
         'eventname' => '\core\event\role_assigned',
         'callback' => '\tool_leeloolxp_sync\syncobserver::role_assign',
     ),
+
+    array(
+        'eventname' => '\core\event\user_loggedin',
+        'callback' => '\tool_leeloolxp_sync\syncobserver::user_logged_in',
+    ),
+
+    array(
+        'eventname' => '\core\event\course_category_deleted',
+        'callback' => '\tool_leeloolxp_sync\syncobserver::course_category_delete',
+    ),
+
+    array(
+        'eventname' => '*',
+        'callback' => '\tool_leeloolxp_sync\syncobserver::badge_createdd',
+    ),
 );

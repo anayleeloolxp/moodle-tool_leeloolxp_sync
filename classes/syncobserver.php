@@ -37,17 +37,64 @@ defined('MOODLE_INTERNAL') || die();
 class syncobserver {
 
     /**
+     * Function to get Leeloo Install
+     *
+     * @return string leeloo url
+     */
+    public static function tool_leeloolxp_sync_get_leelooinstall() {
+
+        global $SESSION;
+
+        if (isset($SESSION->sync_leelooinstall)) {
+            return $SESSION->sync_leelooinstall;
+        }
+
+        $configenroll = get_config('tool_leeloolxp_sync');
+        $liacnsekey = $configenroll->leeloolxp_synclicensekey;
+        $postdata = array('license_key' => $liacnsekey);
+        $url = 'https://leeloolxp.com/api_moodle.php/?action=page_info';
+        $curl = new curl;
+        $options = array(
+            'CURLOPT_RETURNTRANSFER' => true,
+            'CURLOPT_HEADER' => false,
+            'CURLOPT_POST' => count($postdata),
+        );
+
+        if (!$output = $curl->post($url, $postdata, $options)) {
+            $leelooinstallurl = 'no';
+            $SESSION->sync_leelooinstall = $leelooinstallurl;
+        }
+
+        $infoteamnio = json_decode($output);
+        if ($infoteamnio->status != 'false') {
+            $leelooinstallurl = $infoteamnio->data->install_url;
+            $SESSION->sync_leelooinstall = $leelooinstallurl;
+        } else {
+            $leelooinstallurl = 'no';
+            $SESSION->sync_leelooinstall = $leelooinstallurl;
+        }
+
+        return $leelooinstallurl;
+    }
+
+    /**
      * Triggered when course completed.
      *
      * @param \core\event\course_module_completion_updated $event
      */
     public static function completion_updated(\core\event\course_module_completion_updated $event) {
 
+        $teamniourl = self::tool_leeloolxp_sync_get_leelooinstall();
+
+        if ($teamniourl == 'no') {
+            return true;
+        }
+
         global $DB;
 
         global $CFG;
 
-        require_once($CFG->dirroot . '/lib/filelib.php');
+        require_once ($CFG->dirroot . '/lib/filelib.php');
 
         $moduleid = $event->contextinstanceid;
 
@@ -57,13 +104,9 @@ class syncobserver {
 
         $user = $DB->get_record('user', array('id' => $userid));
 
-        $configenroll = get_config('tool_leeloolxp_sync');
+        $postdata = array('email' => base64_encode($user->email), 'completionstate' => $completionstate, 'activity_id' => $moduleid);
 
-        $liacnsekey = $configenroll->leeloolxp_synclicensekey;
-
-        $postdata = array('license_key' => $liacnsekey);
-
-        $url = 'https://leeloolxp.com/api_moodle.php/?action=page_info';
+        $url = $teamniourl . '/admin/sync_moodle_course/mark_completed_by_moodle_user';
 
         $curl = new curl;
 
@@ -78,35 +121,6 @@ class syncobserver {
         );
 
         if (!$output = $curl->post($url, $postdata, $options)) {
-            return true;
-        }
-
-        $infoteamnio = json_decode($output);
-
-        if ($infoteamnio->status != 'false') {
-            $teamniourl = $infoteamnio->data->install_url;
-
-            $postdata = array('email' => base64_encode($user->email), 'completionstate' => $completionstate, 'activity_id' => $moduleid);
-
-            $url = $teamniourl . '/admin/sync_moodle_course/mark_completed_by_moodle_user';
-
-            $curl = new curl;
-
-            $options = array(
-
-                'CURLOPT_RETURNTRANSFER' => true,
-
-                'CURLOPT_HEADER' => false,
-
-                'CURLOPT_POST' => count($postdata),
-
-            );
-
-            if (!$output = $curl->post($url, $postdata, $options)) {
-                return true;
-            }
-        } else {
-
             return true;
         }
 
@@ -120,25 +134,136 @@ class syncobserver {
      */
     public static function edit_user(\core\event\user_updated $event) {
 
+        $teamniourl = self::tool_leeloolxp_sync_get_leelooinstall();
+
+        if ($teamniourl == 'no') {
+            return true;
+        }
+
         $data = $event->get_data();
 
         global $DB;
 
         global $CFG;
 
-        require_once($CFG->dirroot . '/lib/filelib.php');
+        require_once ($CFG->dirroot . '/lib/filelib.php');
 
         $user = core_user::get_user($data['relateduserid'], '*', MUST_EXIST);
 
         $email = str_replace("'", '', $user->email);
 
-        $configenroll = get_config('tool_leeloolxp_sync');
+        $countries = get_string_manager()->get_list_of_countries();
 
-        $liacnsekey = $configenroll->leeloolxp_synclicensekey;
+        $userinterests = $DB->get_records_sql("SELECT * FROM {tag}
 
-        $postdata = array('license_key' => $liacnsekey);
+            JOIN {tag_instance} ON {tag_instance}.tagid = {tag}.id JOIN {user}
 
-        $url = 'https://leeloolxp.com/api_moodle.php/?action=page_info';
+            ON {user}.id = {tag_instance}.itemid AND {tag_instance}.itemtype = 'user'
+
+            AND {user}.username = ?", [$user->username]);
+
+        $userinterestsarr = array();
+
+        if (!empty($userinterests)) {
+            foreach ($userinterests as $value) {
+                $userinterestsarr[] = $value->name;
+            }
+        }
+
+        $userinterestsstring = implode(',', $userinterestsarr);
+
+        $lastlogin = date('Y-m-d h:i:s', $user->lastlogin);
+
+        $fullname = fullname($user);
+
+        $city = $user->city;
+
+        $country = $countries[$user->country];
+
+        $timezone = $user->timezone;
+
+        $skype = $user->skype;
+
+        $idnumber = $user->idnumber;
+
+        $institution = $user->institution;
+
+        $department = $user->department;
+
+        $phone = $user->phone1;
+
+        $moodlephone = $user->phone2;
+
+        $address = $user->address;
+
+        $firstaccess = $user->firstaccess;
+
+        $lastaccess = $user->lastaccess;
+
+        $lastlogin = $lastlogin;
+
+        $lastip = $user->lastip;
+
+        $interests = $userinterestsstring;
+
+        $description = $user->description;
+
+        $descriptionofpic = $user->imagealt;
+
+        $alternatename = $user->alternatename;
+
+        $webpage = $user->url;
+
+        $sql = "SELECT ud.data  FROM {user_info_data} ud JOIN
+
+            {user_info_field} uf ON uf.id = ud.fieldid WHERE ud.userid = :userid
+
+            AND uf.shortname = :fieldname";
+
+        $params = array('userid' => $user->id, 'fieldname' => 'degree');
+
+        $degree = $DB->get_field_sql($sql, $params);
+
+        $sql = "SELECT ud.data FROM {user_info_data} ud JOIN {user_info_field}
+
+            uf ON uf.id = ud.fieldid WHERE ud.userid = :userid AND
+
+            uf.shortname = :fieldname";
+
+        $params = array('userid' => $user->id, 'fieldname' => 'Pathway');
+
+        $pathway = $DB->get_field_sql($sql, $params);
+
+        $imgurl = new moodle_url('/user/pix.php/' . $user->id . '/f1.jpg');
+
+        $postdata = array(
+            'email' => base64_encode($email),
+            'name' => $fullname,
+            'city' => $city,
+            'country' => $country,
+            'timezone' => $timezone,
+            'skype' => $skype,
+            'idnumber' => $idnumber,
+            'institution' => $institution,
+            'department' => $department,
+            'phone' => $phone,
+            'moodle_phone' => $moodlephone,
+            'address' => $address,
+            'firstaccess' => $firstaccess,
+            'lastaccess' => $lastaccess,
+            'lastlogin' => $lastlogin,
+            'lastip' => $lastip,
+            'description' => $description,
+            'description_of_pic' => $descriptionofpic,
+            'alternatename' => $alternatename,
+            'web_page' => $webpage,
+            'img_url' => $imgurl,
+            'interests' => $interests,
+            'degree' => $degree,
+            'pathway' => $pathway,
+        );
+
+        $url = $teamniourl . '/admin/sync_moodle_course/update_username';
 
         $curl = new curl;
 
@@ -155,141 +280,7 @@ class syncobserver {
         if (!$output = $curl->post($url, $postdata, $options)) {
             return true;
         }
-
-        $infoteamnio = json_decode($output);
-
-        $countries = get_string_manager()->get_list_of_countries();
-
-        if ($infoteamnio->status != 'false') {
-            $teamniourl = $infoteamnio->data->install_url;
-
-            $userinterests = $DB->get_records_sql("SELECT * FROM {tag}
-
-            JOIN {tag_instance} ON {tag_instance}.tagid = {tag}.id JOIN {user}
-
-            ON {user}.id = {tag_instance}.itemid AND {tag_instance}.itemtype = 'user'
-
-            AND {user}.username = ?", [$user->username]);
-
-            $userinterestsarr = array();
-
-            if (!empty($userinterests)) {
-                foreach ($userinterests as $value) {
-                    $userinterestsarr[] = $value->name;
-                }
-            }
-
-            $userinterestsstring = implode(',', $userinterestsarr);
-
-            $lastlogin = date('Y-m-d h:i:s', $user->lastlogin);
-
-            $fullname = fullname($user);
-
-            $city = $user->city;
-
-            $country = $countries[$user->country];
-
-            $timezone = $user->timezone;
-
-            $skype = $user->skype;
-
-            $idnumber = $user->idnumber;
-
-            $institution = $user->institution;
-
-            $department = $user->department;
-
-            $phone = $user->phone1;
-
-            $moodlephone = $user->phone2;
-
-            $address = $user->address;
-
-            $firstaccess = $user->firstaccess;
-
-            $lastaccess = $user->lastaccess;
-
-            $lastlogin = $lastlogin;
-
-            $lastip = $user->lastip;
-
-            $interests = $userinterestsstring;
-
-            $description = $user->description;
-
-            $descriptionofpic = $user->imagealt;
-
-            $alternatename = $user->alternatename;
-
-            $webpage = $user->url;
-
-            $sql = "SELECT ud.data  FROM {user_info_data} ud JOIN
-
-            {user_info_field} uf ON uf.id = ud.fieldid WHERE ud.userid = :userid
-
-            AND uf.shortname = :fieldname";
-
-            $params = array('userid' => $user->id, 'fieldname' => 'degree');
-
-            $degree = $DB->get_field_sql($sql, $params);
-
-            $sql = "SELECT ud.data FROM {user_info_data} ud JOIN {user_info_field}
-
-            uf ON uf.id = ud.fieldid WHERE ud.userid = :userid AND
-
-            uf.shortname = :fieldname";
-
-            $params = array('userid' => $user->id, 'fieldname' => 'Pathway');
-
-            $pathway = $DB->get_field_sql($sql, $params);
-
-            $imgurl = new moodle_url('/user/pix.php/' . $user->id . '/f1.jpg');
-
-            $postdata = array(
-                'email' => base64_encode($email),
-                'name' => $fullname,
-                'city' => $city,
-                'country' => $country,
-                'timezone' => $timezone,
-                'skype' => $skype,
-                'idnumber' => $idnumber,
-                'institution' => $institution,
-                'department' => $department,
-                'phone' => $phone,
-                'moodle_phone' => $moodlephone,
-                'address' => $address,
-                'firstaccess' => $firstaccess,
-                'lastaccess' => $lastaccess,
-                'lastlogin' => $lastlogin,
-                'lastip' => $lastip,
-                'description' => $description,
-                'description_of_pic' => $descriptionofpic,
-                'alternatename' => $alternatename,
-                'web_page' => $webpage,
-                'img_url' => $imgurl,
-                'interests' => $interests,
-                'degree' => $degree,
-                'pathway' => $pathway,
-            );
-
-            $url = $teamniourl . '/admin/sync_moodle_course/update_username';
-
-            $curl = new curl;
-
-            $options = array(
-
-                'CURLOPT_RETURNTRANSFER' => true,
-
-                'CURLOPT_HEADER' => false,
-
-                'CURLOPT_POST' => count($postdata),
-
-            );
-
-            if (!$output = $curl->post($url, $postdata, $options)) {
-                return true;
-            }
-        }
+        return true;
     }
 
     /**
@@ -299,9 +290,15 @@ class syncobserver {
      */
     public static function group_member_added(\core\event\group_member_added $events) {
 
+        $teamniourl = self::tool_leeloolxp_sync_get_leelooinstall();
+
+        if ($teamniourl == 'no') {
+            return true;
+        }
+
         global $CFG;
 
-        require_once($CFG->dirroot . '/lib/filelib.php');
+        require_once ($CFG->dirroot . '/lib/filelib.php');
 
         $group = $events->get_record_snapshot('groups', $events->objectid);
 
@@ -311,13 +308,9 @@ class syncobserver {
 
         $groupname = str_replace("'", '', $group->name);
 
-        $configenroll = get_config('tool_leeloolxp_sync');
+        $postdata = array('email' => base64_encode($user->email), 'courseid' => $courseid, 'group_name' => $groupname);
 
-        $liacnsekey = $configenroll->leeloolxp_synclicensekey;
-
-        $postdata = array('license_key' => $liacnsekey);
-
-        $url = 'https://leeloolxp.com/api_moodle.php/?action=page_info';
+        $url = $teamniourl . '/admin/sync_moodle_course/update_group';
 
         $curl = new curl;
 
@@ -334,35 +327,7 @@ class syncobserver {
         if (!$output = $curl->post($url, $postdata, $options)) {
             return true;
         }
-
-        $infoteamnio = json_decode($output);
-
-        if ($infoteamnio->status != 'false') {
-            $teamniourl = $infoteamnio->data->install_url;
-
-            $postdata = array('email' => base64_encode($user->email), 'courseid' => $courseid, 'group_name' => $groupname);
-
-            $url = $teamniourl . '/admin/sync_moodle_course/update_group';
-
-            $curl = new curl;
-
-            $options = array(
-
-                'CURLOPT_RETURNTRANSFER' => true,
-
-                'CURLOPT_HEADER' => false,
-
-                'CURLOPT_POST' => count($postdata),
-
-            );
-
-            if (!$output = $curl->post($url, $postdata, $options)) {
-                return true;
-            }
-        } else {
-
-            return true;
-        }
+        return true;
     }
 
     /**
@@ -372,11 +337,17 @@ class syncobserver {
      */
     public static function role_assign(\core\event\role_assigned $enrolmentdata) {
 
+        $teamniourl = self::tool_leeloolxp_sync_get_leelooinstall();
+
+        if ($teamniourl == 'no') {
+            return true;
+        }
+
         global $DB;
 
         global $CFG;
 
-        require_once($CFG->dirroot . '/lib/filelib.php');
+        require_once ($CFG->dirroot . '/lib/filelib.php');
 
         $snapshotid = $enrolmentdata->get_data()['other']['id'];
 
@@ -512,41 +483,6 @@ class syncobserver {
             }
         }
 
-        $configenroll = get_config('tool_leeloolxp_sync');
-
-        $liacnsekey = $configenroll->leeloolxp_synclicensekey;
-
-        $postdata = array('license_key' => $liacnsekey);
-
-        $url = 'https://leeloolxp.com/api_moodle.php/?action=page_info';
-
-        $curl = new curl;
-
-        $options = array(
-
-            'CURLOPT_RETURNTRANSFER' => true,
-
-            'CURLOPT_HEADER' => false,
-
-            'CURLOPT_POST' => count($postdata),
-
-        );
-
-        if (!$output = $curl->post($url, $postdata, $options)) {
-            return true;
-        }
-
-        $infoteamnio = json_decode($output);
-
-        if ($infoteamnio->status != 'false') {
-            $teamniourl = $infoteamnio->data->install_url;
-        } else {
-
-            $teamniourl = '';
-
-            return false;
-        }
-
         $lastlogin = date('Y-m-d h:i:s', $user->lastlogin);
 
         $fullname = fullname($user);
@@ -638,6 +574,513 @@ class syncobserver {
 
         if (!$output = $curl->post($url, $postdata, $options)) {
             return true;
+        }
+        return true;
+    }
+
+    /**
+     * Triggered when user_logged_in.
+     *
+     * @param \core\event\user_loggedin $events
+     */
+    public static function user_logged_in(\core\event\user_loggedin $events) {
+
+        $teamniourl = self::tool_leeloolxp_sync_get_leelooinstall();
+
+        if ($teamniourl == 'no') {
+            return true;
+        }
+
+        $postdata = '&moodle_cat_id=0';
+        $url = $teamniourl . '/admin/sync_moodle_course/check_grade_and_history';
+        $curl = new curl;
+        $options = array(
+            'CURLOPT_RETURNTRANSFER' => true,
+            'CURLOPT_HEADER' => false,
+            'CURLOPT_POST' => 1,
+        );
+        $output = $curl->post($url, $postdata, $options);
+        $output = json_decode($output);
+        session_start();
+        $_SESSION['gradehistoryid'] = $output->grade_history_id;
+        $_SESSION['gradegradesid'] = $output->grade_grades_id;
+
+        return true;
+    }
+
+    /**
+     * Triggered when category delete.
+     *
+     * @param \core\event\course_category_deleted $events
+     */
+    public static function course_category_delete(\core\event\course_category_deleted $events) {
+
+        $teamniourl = self::tool_leeloolxp_sync_get_leelooinstall();
+
+        if ($teamniourl == 'no') {
+            return true;
+        }
+
+        $postdata = '&moodle_cat_id=' . $events->get_data()['objectid'];
+        $url = $teamniourl . '/admin/sync_moodle_course/delete_category_from_moodle/';
+        $curl = new curl;
+        $options = array(
+            'CURLOPT_RETURNTRANSFER' => true,
+            'CURLOPT_HEADER' => false,
+            'CURLOPT_POST' => 1,
+        );
+
+        if (!$output = $curl->post($url, $postdata, $options)) {
+            return true;
+        }
+        return true;
+    }
+
+    /**
+     * Triggered when base.
+     *
+     * @param \core\event\base $events
+     */
+    public static function badge_createdd(\core\event\base $events) {
+
+        $teamniourl = self::tool_leeloolxp_sync_get_leelooinstall();
+
+        if ($teamniourl == 'no') {
+            return true;
+        }
+
+        // return true; // to disable it for now bcz * event is not allowed by moodle.
+
+        global $USER;
+        global $CFG;
+        global $DB;
+
+        require_once ($CFG->dirroot . '/lib/filelib.php');
+
+        $eventdata = $events->get_data();
+        $alldetail = json_encode($eventdata);
+
+        $userid = $eventdata['userid'];
+        $courseid = $eventdata['courseid'];
+        $contextinstanceid = $eventdata['contextinstanceid'];
+        $component = $eventdata['target'];
+        $action = $eventdata['action'];
+        $eventname = $eventdata['eventname'];
+
+        if ($eventname == '\core\event\course_category_created' || $eventname == '\core\event\course_category_updated') {
+            $eventdata = $events->get_data();
+            $iddd = $eventdata['objectid'];
+            $catdatamin = $DB->get_records_sql("select * from {course_categories} where id = '$iddd'");
+
+            $postdataworkshopgrade = '&useremail=' . base64_encode($USER->email) . '&cat_data=' . json_encode($catdatamin);
+
+            $url = $teamniourl . '/admin/sync_moodle_course/update_insert_categories';
+            $curl = new curl;
+            $options = array(
+                'CURLOPT_RETURNTRANSFER' => true,
+                'CURLOPT_HEADER' => false,
+                'CURLOPT_POST' => 1,
+            );
+            $output = $curl->post($url, $postdataworkshopgrade, $options);
+        }
+
+        if ($eventname == '\mod_workshop\event\assessable_uploaded' || $eventname == '\assignsubmission_onlinetext\event\assessable_uploaded' || $eventname == '\mod_assign\event\assessable_submitted') {
+            $eventdata = $events->get_data();
+
+            $postdataworkshopgrade = '&useremail=' . base64_encode($USER->email) . '&activity_id=' . $eventdata['contextinstanceid'];
+
+            $url = $teamniourl . '/admin/sync_moodle_course/insert_update_user_submission_completion';
+            $curl = new curl;
+            $options = array(
+                'CURLOPT_RETURNTRANSFER' => true,
+                'CURLOPT_HEADER' => false,
+                'CURLOPT_POST' => 1,
+            );
+            $output = $curl->post($url, $postdataworkshopgrade, $options);
+        }
+
+        if ($eventname == '\core\event\course_module_completion_updated') {
+            $eventdata = $events->get_data();
+            $objecttable = $eventdata['objecttable'];
+            $objectid = $eventdata['objectid'];
+            $coursedatamain = $events->get_record_snapshot($objecttable, $objectid);
+
+            $sql = "SELECT email FROM {user} where id = ?";
+            $userdetail = $DB->get_record_sql($sql, [$eventdata['relateduserid']]);
+
+            $postdataworkshopgrade = '&coursedatamain=' . json_encode($coursedatamain) . '&useremail=' . base64_encode($userdetail->email) . '&gradedby=' . base64_encode($USER->email) . '&activity_id=' . $eventdata['contextinstanceid'];
+
+            $url = $teamniourl . '/admin/sync_moodle_course/insert_update_activity_completion';
+            $curl = new curl;
+            $options = array(
+                'CURLOPT_RETURNTRANSFER' => true,
+                'CURLOPT_HEADER' => false,
+                'CURLOPT_POST' => 1,
+            );
+            $output = $curl->post($url, $postdataworkshopgrade, $options);
+        }
+
+        if ($eventname == '\report_completion\event\report_viewed') {
+            $eventdata = $events->get_data();
+            $courseid = $eventdata['courseid'];
+            $sql = "SELECT email FROM {user} where id = ?";
+            $userscompletedcourse = $DB->get_records_sql("SELECT DISTINCT user.email , cc.id , cc.timestarted , cc.reaggregate FROM {course_completions} as cc left join {user} as user on cc.userid = user.id where cc.course = '$courseid' group by cc.userid ");
+
+            $postdatamain = '&userscompletedcourse=' . json_encode($userscompletedcourse) . '&email=' . base64_encode($USER->email) . '&is_bulk_insert=' . $courseid;
+
+            $url = $teamniourl . '/admin/sync_moodle_course/insert_update_course_completion';
+            $curl = new curl;
+            $options = array(
+                'CURLOPT_RETURNTRANSFER' => true,
+                'CURLOPT_HEADER' => false,
+                'CURLOPT_POST' => 1,
+            );
+            $output = $curl->post($url, $postdatamain, $options);
+        }
+
+        if ($eventname == '\core\event\role_unassigned' || $eventname == '\core\event\role_assigned') {
+            $eventdata = $events->get_data();
+            $relateduserid = $eventdata['relateduserid'];
+            $rolenames = '';
+
+            $userroles = $DB->get_records_sql("SELECT  DISTINCT rol.shortname  FROM {role_assignments} as ra left join {role} as rol on ra.roleid = rol.id where ra.userid = '$relateduserid' group by ra.roleid ");
+
+            if (!empty($userroles)) {
+                foreach ($userroles as $key => $value) {
+                    if ($value->shortname == "teacher") {
+                        $rolenames .= 'non editing teacher,';
+                    } elseif ($value->shortname == "editingteacher") {
+                        $rolenames .= 'teacher,';
+                    } else {
+                        $rolenames .= $value->shortname . ',';
+                    }
+                }
+                $rolenames = trim($rolenames, ',');
+            }
+
+            $sql = "SELECT email FROM {user} where id = ?";
+            $userdetail = $DB->get_record_sql($sql, [$relateduserid]);
+
+            $postdatamain = '&rolenames=' . json_encode($rolenames) . '&user_email=' . base64_encode($userdetail->email) . '&email_changedby=' . base64_encode($USER->email);
+
+            $url = $teamniourl . '/admin/sync_moodle_course/update_user_role_changed';
+            $curl = new curl;
+            $options = array(
+                'CURLOPT_RETURNTRANSFER' => true,
+                'CURLOPT_HEADER' => false,
+                'CURLOPT_POST' => 1,
+            );
+            $output = $curl->post($url, $postdatamain, $options);
+        }
+
+        if ($eventname == '\mod_workshop\event\submission_reassessed' || $eventname == '\mod_workshop\event\submission_assessed') {
+            // Workshop sync
+
+            $eventdata = $events->get_data();
+            $objecttable = $eventdata['objecttable'];
+            $objectid = $eventdata['objectid'];
+            $fulldata = $events->get_record_snapshot($objecttable, $objectid);
+
+            $sql = "SELECT * FROM {workshop_grades} where assessmentid = ?";
+            $workshopdatamain = $DB->get_record_sql($sql, [$eventdata['objectid']]);
+
+            $workshopdatamain->timecreated = $fulldata->timecreated;
+            $workshopdatamain->timemodified = $fulldata->timemodified;
+            $workshopdatamain->activity_id = $eventdata['contextinstanceid'];
+
+            $sql = "SELECT email FROM {user} where id = ?";
+            $userdetail = $DB->get_record_sql($sql, [$eventdata['relateduserid']]);
+
+            $postdataworkshopgrade = '&workshopdatamain=' . json_encode($workshopdatamain) . '&email=' . base64_encode($userdetail->email) . '&gradedby=' . base64_encode($USER->email);
+
+            $url = $teamniourl . '/admin/sync_moodle_course/update_grade_workshop_grade';
+            $curl = new curl;
+            $options = array(
+                'CURLOPT_RETURNTRANSFER' => true,
+                'CURLOPT_HEADER' => false,
+                'CURLOPT_POST' => 1,
+            );
+            $output = $curl->post($url, $postdataworkshopgrade, $options);
+        }
+
+        if ($eventname == '\mod_quiz\event\attempt_deleted') {
+            // Quiz deleted
+
+            $eventdata = $events->get_data();
+
+            $objecttable = $eventdata['objecttable'];
+            $objectid = $eventdata['objectid'];
+            $fulldata = $events->get_record_snapshot($objecttable, $objectid);
+
+            $userid = $fulldata->userid;
+            $quizid = $fulldata->quiz;
+
+            $sql = "SELECT email FROM {user} where id = ?";
+            $userdetail = $DB->get_record_sql($sql, [$userid]);
+
+            $sql = "SELECT * FROM {quiz_grades} where quiz = ? and userid = ? ";
+            $quizdata = $DB->get_record_sql($sql, [$quizid, $userid]);
+
+            $postdataquizgrade = '&quizdata=' . json_encode($quizdata) . '&email=' . base64_encode($userdetail->email);
+
+            $url = $teamniourl . '/admin/sync_moodle_course/delete_grade_quiz_grade';
+            $curl = new curl;
+            $options = array(
+                'CURLOPT_RETURNTRANSFER' => true,
+                'CURLOPT_HEADER' => false,
+                'CURLOPT_POST' => 1,
+            );
+            $output = $curl->post($url, $postdataquizgrade, $options);
+        }
+
+        // sync tag to leeloo
+        if ($eventname == '\core\event\tag_created') {
+            $tagdata = json_encode($events->get_data());
+
+            $posttagdata = '&tagdata=' . $tagdata;
+
+            $url = $teamniourl . '/admin/sync_moodle_course/sync_tags';
+            $curl = new curl;
+            $options = array(
+                'CURLOPT_RETURNTRANSFER' => true,
+                'CURLOPT_HEADER' => false,
+                'CURLOPT_POST' => 1,
+            );
+            $output = $curl->post($url, $posttagdata, $options);
+        }
+
+        if ($eventname == '\core\event\user_graded') {
+            // Forum sync and delete lesson also
+
+            $eventdata = $events->get_data();
+
+            $objecttable = $eventdata['objecttable'];
+            $objectid = $eventdata['objectid'];
+            $fulldata = $events->get_record_snapshot($objecttable, $objectid);
+
+            $sql = "SELECT iteminstance,itemnumber FROM {grade_items} where id = ? ";
+            $itemdata = $DB->get_record_sql($sql, [$fulldata->itemid]);
+
+            $sql = "SELECT * FROM {forum_grades} where forum = ? AND itemnumber = ? AND userid = ? ";
+            $forumgradedata = $DB->get_record_sql($sql, [$itemdata->iteminstance, $itemdata->itemnumber, $fulldata->userid]);
+
+            $sql = "SELECT email FROM {user} where id = ?";
+            $userdetail = $DB->get_record_sql($sql, [$fulldata->userid]);
+
+            if (!empty($eventdata['other']['overridden'])) {
+                $sql = "SELECT * FROM {grade_grades_history} where oldid = ? AND itemid = ? AND userid = ? ORDER BY `id` DESC ";
+                $forumgradedata = $DB->get_record_sql($sql, [$eventdata['objectid'], $eventdata['other']['itemid'], $eventdata['relateduserid']]);
+
+                $url = $teamniourl . '/admin/sync_moodle_course/insert_grade_history';
+            } elseif (!empty($forumgradedata)) {
+
+                $sql = "SELECT * FROM {course_modules} where course = ? AND module = ? AND instance = ? ";
+                $forummodule = $DB->get_record_sql($sql, [$eventdata['courseid'], '9', $itemdata->iteminstance]);
+                $forumgradedata->activity_id = $forummodule->id;
+
+                $url = $teamniourl . '/admin/sync_moodle_course/update_grade_forum_grade';
+            } else {
+                $relateduserid = $eventdata['relateduserid'];
+                $iteminstance = $itemdata->iteminstance;
+                $forumgradedata = array('iteminstance' => $iteminstance, 'relateduserid' => $relateduserid);
+                $url = $teamniourl . '/admin/sync_moodle_course/delete_lesson_grades';
+            }
+
+            $postdataforum = '&forumgradedata=' . json_encode($forumgradedata) . '&email=' . base64_encode($userdetail->email) . '&gradedby=' . base64_encode($USER->email);
+
+            $curl = new curl;
+            $options = array(
+                'CURLOPT_RETURNTRANSFER' => true,
+                'CURLOPT_HEADER' => false,
+                'CURLOPT_POST' => 1,
+            );
+            $output = $curl->post($url, $postdataforum, $options);
+        }
+
+        if ($eventname == '\mod_quiz\event\attempt_reviewed') {
+            // Quiz sync
+
+            $eventdata = $events->get_data();
+
+            $userid = $eventdata['userid'];
+            $quizid = $eventdata['other']['quizid'];
+            $activity_id = $eventdata['contextinstanceid'];
+
+            $sql = "SELECT email FROM {user} where id = ?";
+            $userdetail = $DB->get_record_sql($sql, [$userid]);
+
+            $sql = "SELECT * FROM {quiz_grades} where quiz = ? and userid = ? ";
+            $quizdata = $DB->get_record_sql($sql, [$quizid, $userid]);
+
+            $sql = "SELECT gradepass FROM {grade_items} where iteminstance = ? and courseid = ? ";
+            $argrade = $DB->get_record_sql($sql, [$quizdata->lessonid, $eventdata['courseid']]);
+
+            $pass_fail = 'passed';
+
+            if (!empty($argrade) && !empty($argrade->gradepass)) {
+                $pass_fail = 'failed';
+                if ($lessionrec->grade >= $argrade->gradepass) {
+                    $pass_fail = 'passed';
+                }
+            }
+
+            $postdataquizgrade = '&quizdata=' . json_encode($quizdata) . '&activity_id=' . json_encode($activity_id) . '&email=' . base64_encode($userdetail->email) . '&gradedby=' . base64_encode($USER->email);
+
+            $url = $teamniourl . '/admin/sync_moodle_course/update_grade_quiz_grade';
+            $curl = new curl;
+            $options = array(
+                'CURLOPT_RETURNTRANSFER' => true,
+                'CURLOPT_HEADER' => false,
+                'CURLOPT_POST' => 1,
+            );
+            $output = $curl->post($url, $postdataquizgrade, $options);
+        }
+
+        if ($eventname == '\mod_lesson\event\essay_assessed') {
+            // lesson sync
+
+            $lessiongradedata = json_encode($events->get_data());
+
+            $objecttable = $eventdata['objecttable'];
+            $objectid = $eventdata['objectid'];
+            $lessionrec = $events->get_record_snapshot($objecttable, $objectid);
+
+            $sql = "SELECT email FROM {user} where id = ?";
+            $userdetail = $DB->get_record_sql($sql, [$lessionrec->userid]);
+
+            $sql = "SELECT gradepass FROM {grade_items} where iteminstance = ? and courseid = ? ";
+            $argrade = $DB->get_record_sql($sql, [$lessionrec->lessonid, $eventdata['courseid']]);
+
+            $pass_fail = 'passed';
+
+            if (!empty($argrade) && !empty($argrade->gradepass)) {
+                $pass_fail = 'failed';
+                if ($lessionrec->grade >= $argrade->gradepass) {
+                    $pass_fail = 'passed';
+                }
+            }
+
+            $postdatalessiongrade = '&lession_grade_data=' . $lessiongradedata . '&grade=' . json_encode($lessionrec->grade) . '&late=' . json_encode($lessionrec->late) . '&completed=' . json_encode($lessionrec->completed) . '&email=' . base64_encode($userdetail->email) . '&gradedby=' . base64_encode($USER->email) . '&pass_fail=' . json_encode($pass_fail);
+
+            $url = $teamniourl . '/admin/sync_moodle_course/update_grade_lession_grade';
+            $curl = new curl;
+            $options = array(
+                'CURLOPT_RETURNTRANSFER' => true,
+                'CURLOPT_HEADER' => false,
+                'CURLOPT_POST' => 1,
+            );
+            $output = $curl->post($url, $postdatalessiongrade, $options);
+        }
+
+        if ($eventname == '\mod_assign\event\submission_graded') {
+            // assign sync
+
+            $objecttable = $eventdata['objecttable'];
+            $objectid = $eventdata['objectid'];
+            $rec = $events->get_record_snapshot($objecttable, $objectid);
+            $assigndatamain = json_encode($rec);
+            $assigndatacommon = json_encode($events->get_data());
+
+            $sql = "SELECT email FROM {user} where id = ?";
+            $userdetail = $DB->get_record_sql($sql, [$rec->userid]);
+
+            $postdataassigngrade = '&assign_data_main=' . $assigndatamain . '&assign_data_common=' . $assigndatacommon . '&email=' . base64_encode($userdetail->email) . '&gradedby=' . base64_encode($USER->email);
+
+            $url = $teamniourl . '/admin/sync_moodle_course/update_grade_assign_submit';
+            $curl = new curl;
+            $options = array(
+                'CURLOPT_RETURNTRANSFER' => true,
+                'CURLOPT_HEADER' => false,
+                'CURLOPT_POST' => 1,
+            );
+            $output = $curl->post($url, $postdataassigngrade, $options);
+        }
+
+        if ($eventname == '\core\event\grade_item_updated' || $eventname == '\core\event\grade_item_created') {
+            $itemdata = $events->get_grade_item();
+
+            $itemdataonly = array(
+                'courseid' => $itemdata->courseid,
+                'categoryid' => $itemdata->categoryid,
+                'item_category' => $itemdata->item_category,
+                'parent_category' => $itemdata->parent_category,
+                'itemname' => $itemdata->itemname,
+                'itemtype' => $itemdata->itemtype,
+                'itemmodule' => $itemdata->itemmodule,
+                'iteminstance' => $itemdata->iteminstance,
+                'itemnumber' => $itemdata->itemnumber,
+                'iteminfo' => $itemdata->iteminfo,
+                'idnumber' => $itemdata->idnumber,
+                'calculation_normalized' => $itemdata->calculation_normalized,
+                'formula' => $itemdata->formula,
+                'gradetype' => $itemdata->gradetype,
+                'grademax' => $itemdata->grademax,
+                'grademin' => $itemdata->grademin,
+                'scaleid' => $itemdata->scaleid,
+                'scale' => $itemdata->scale,
+                'outcomeid' => $itemdata->outcomeid,
+                'gradepass' => $itemdata->gradepass,
+                'multfactor' => $itemdata->multfactor,
+                'plusfactor' => $itemdata->plusfactor,
+                'aggregationcoef' => $itemdata->aggregationcoef,
+                'aggregationcoef2' => $itemdata->aggregationcoef2,
+                'sortorder' => $itemdata->sortorder,
+                'display' => $itemdata->display,
+                'decimals' => $itemdata->decimals,
+                'locked' => $itemdata->locked,
+                'locktime' => $itemdata->locktime,
+                'needsupdate' => $itemdata->needsupdate,
+                'weightoverride' => $itemdata->weightoverride,
+                'dependson_cache' => $itemdata->dependson_cache,
+                'optional_fields' => json_encode($itemdata->optional_fields),
+                'id' => $itemdata->id,
+                'timecreated' => $itemdata->timecreated,
+                'timemodified' => $itemdata->timemodified,
+                'hidden' => $itemdata->hidden,
+            );
+            $grededata = '&item_data=' . json_encode($itemdataonly);
+
+            $gredegradedatastring = '';
+
+            if ($itemdata->itemtype == 'category' && !empty($itemdata->iteminstance)) {
+                $gradecategorydata = $DB->get_records_sql("select * from {grade_categories} where id = '$itemdata->iteminstance' ");
+                $gradecategory = '&grade_category=' . json_encode($gradecategorydata);
+            }
+        } else {
+            $grededata = '';
+            $gredegradedatastring = '';
+            $gradecategory = '';
+        }
+
+        session_start();
+        $gradehistoryid = $_SESSION['gradehistoryid'];
+        $gradegradesid = $_SESSION['gradegradesid'];
+
+        $sql = "SELECT ggh.*,u.email  FROM {grade_grades} as ggh left join {user} as u on ggh.userid = u.id where ggh.id > ? ";
+        $gradegradesdata = $DB->get_records_sql($sql, [$gradegradesid]);
+
+        $sql = "SELECT ggh.*,u.email  FROM {grade_grades_history} as ggh left join {user} as u on ggh.userid = u.id where ggh.id > ? ";
+        $gradehistorydata = $DB->get_records_sql($sql, [$gradehistoryid]);
+
+        $postdata = '&gradegradesdata=' . json_encode($gradegradesdata) . '&gradehistorydata=' . json_encode($gradehistorydata) . '&moodle_user_id=' . $userid . '&course_id=' . $courseid . '&activity_id=' .
+
+        $contextinstanceid . "&mod_name=" . $component . "&user_email=" . base64_encode($USER->email) .
+
+            "&action=" . $action . '&detail=' . $alldetail . '&event_name=' . $eventname . $grededata . $gredegradedatastring . $gradecategory;
+
+        $url = $teamniourl . '/admin/sync_moodle_course/update_viewed_log';
+        $curl = new curl;
+        $options = array(
+            'CURLOPT_RETURNTRANSFER' => true,
+            'CURLOPT_HEADER' => false,
+            'CURLOPT_POST' => 1,
+        );
+        $output = $curl->post($url, $postdata, $options);
+
+        if (!empty($output)) {
+            $output_arr = explode('&', $output);
+            $_SESSION['gradegradesid'] = $output_arr[0];
+            $_SESSION['gradehistoryid'] = $output_arr[1];
         }
     }
 }
