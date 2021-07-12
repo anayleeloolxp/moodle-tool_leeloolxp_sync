@@ -724,7 +724,7 @@ class syncobserver {
             $eventdata = $events->get_data();
             $courseid = $eventdata['courseid'];
             $sql = "SELECT email FROM {user} where id = ?";
-            $userscompletedcourse = $DB->get_records_sql("SELECT DISTINCT user.email , cc.id , cc.timestarted , cc.reaggregate FROM {course_completions} as cc left join {user} as user on cc.userid = user.id where cc.course = '$courseid' group by cc.userid ");
+            $userscompletedcourse = $DB->get_records_sql("SELECT DISTINCT user.email , cc.id , cc.timestarted , cc.reaggregate FROM {course_completions} cc left join {user} user on cc.userid = user.id where cc.course = '$courseid' group by cc.userid ");
 
             $postdatamain = '&userscompletedcourse=' . json_encode($userscompletedcourse) . '&email=' . base64_encode($USER->email) . '&is_bulk_insert=' . $courseid;
 
@@ -743,7 +743,7 @@ class syncobserver {
             $relateduserid = $eventdata['relateduserid'];
             $rolenames = '';
 
-            $userroles = $DB->get_records_sql("SELECT  DISTINCT rol.shortname  FROM {role_assignments} as ra left join {role} as rol on ra.roleid = rol.id where ra.userid = '$relateduserid' group by ra.roleid ");
+            $userroles = $DB->get_records_sql("SELECT  DISTINCT rol.shortname  FROM {role_assignments} ra left join {role} rol on ra.roleid = rol.id where ra.userid = '$relateduserid' group by ra.roleid ");
 
             if (!empty($userroles)) {
                 foreach ($userroles as $key => $value) {
@@ -1056,10 +1056,10 @@ class syncobserver {
         $gradehistoryid = $_SESSION['gradehistoryid'];
         $gradegradesid = $_SESSION['gradegradesid'];
 
-        $sql = "SELECT ggh.*,u.email  FROM {grade_grades} as ggh left join {user} as u on ggh.userid = u.id where ggh.id > ? ";
+        $sql = "SELECT ggh.*,u.email  FROM {grade_grades} ggh left join {user} u on ggh.userid = u.id where ggh.id > ? ";
         $gradegradesdata = $DB->get_records_sql($sql, [$gradegradesid]);
 
-        $sql = "SELECT ggh.*,u.email  FROM {grade_grades_history} as ggh left join {user} as u on ggh.userid = u.id where ggh.id > ? ";
+        $sql = "SELECT ggh.*,u.email  FROM {grade_grades_history} ggh left join {user} u on ggh.userid = u.id where ggh.id > ? ";
         $gradehistorydata = $DB->get_records_sql($sql, [$gradehistoryid]);
 
         $postdata = '&gradegradesdata=' . json_encode($gradegradesdata) . '&gradehistorydata=' . json_encode($gradehistorydata) . '&moodle_user_id=' . $userid . '&course_id=' . $courseid . '&activity_id=' .
