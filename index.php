@@ -637,6 +637,14 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
                     }
                 }
 
+                $academicprogramfield = $DB->get_record_sql("SELECT DISTINCT data FROM {user_info_field} field left join {user_info_data} on {user_info_data}.fieldid = field.id where field.name LIKE '%Academic program%' and {user_info_data}.userid= ?", [$enrolleduserid]);
+                
+                if (isset($academicprogramfield->data) && $academicprogramfield->data != '') {
+                    $academicprogram = $academicprogramfield->data;
+                } else {
+                    $academicprogram = '';
+                }
+
                 $usergroupsname = implode(',', $usergroupsname);
 
                 $moodleurlpic = new moodle_url('/user/pix.php/' . $moodeluservalue->id . '/f.jpg');
@@ -724,6 +732,8 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
 
                         'enrol_status' => $moodeluservalue->enrol_status,
 
+                        'academicprogram' => $academicprogram,
+
                         'enrol_sortorder' => $moodeluservalue->enrol_sortorder);
                 } else {
 
@@ -806,6 +816,8 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
                             'userid' => $moodeluservalue->userid,
 
                             'enrol_status' => $moodeluservalue->enrol_status,
+
+                            'academicprogram' => $academicprogram,
 
                             'enrol_sortorder' => $moodeluservalue->enrol_sortorder);
                     }
@@ -1970,6 +1982,14 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
                     }
                 }
 
+                $academicprogramfield = $DB->get_record_sql("SELECT DISTINCT data FROM {user_info_field} field left join {user_info_data} on {user_info_data}.fieldid = field.id where field.name LIKE '%Academic program%' and {user_info_data}.userid= ?", [$enrolleduserid]);
+                
+                if (isset($academicprogramfield->data) && $academicprogramfield->data != '') {
+                    $academicprogram = $academicprogramfield->data;
+                } else {
+                    $academicprogram = '';
+                }
+
                 $usergroupsname = implode(',', $usergroupsname);
 
                 $moodleurlpic = new moodle_url('/user/pix.php/' . $moodeluservalue->id . '/f.jpg');
@@ -2057,6 +2077,8 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
 
                         'enrol_status' => $moodeluservalue->enrol_status,
 
+                        'academicprogram' => $academicprogram,
+
                         'enrol_sortorder' => $moodeluservalue->enrol_sortorder);
                 } else {
 
@@ -2139,6 +2161,8 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
                             'userid' => $moodeluservalue->userid,
 
                             'enrol_status' => $moodeluservalue->enrol_status,
+
+                            'academicprogram' => $academicprogram,
 
                             'enrol_sortorder' => $moodeluservalue->enrol_sortorder);
                     }
@@ -2259,7 +2283,7 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
             'CURLOPT_POST' => count($post),
 
         );
-
+        // echo "<pre>"; print_r($moodleuserstudentarrayy);die;
         // print_r($curl->post($url, $post, $options));die;
         if (!$response = $curl->post($url, $post, $options)) {
             return true;

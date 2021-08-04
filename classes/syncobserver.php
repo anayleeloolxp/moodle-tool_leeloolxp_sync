@@ -666,6 +666,76 @@ class syncobserver {
         $component = $eventdata['target'];
         $action = $eventdata['action'];
         $eventname = $eventdata['eventname'];
+        // echo "$eventname";die;
+
+        /* if ($eventname != '\mod_assign\event\course_module_viewed' )  { 
+            echo "$eventname";die;
+            // file_put_contents(dirname(__FILE__) . "/privacy/test_point.txt", print_r($output,true) );
+        } */ 
+
+        if ($eventname == '\mod_assign\event\submission_status_updated')  {
+            $eventdata = $events->get_data(); 
+            $postdataassign = '&useremail=' . base64_encode($USER->email) . '&activity_id=' . $eventdata['contextinstanceid'];
+
+            $url = $teamniourl . '/admin/sync_moodle_course/remove_assingment_submission';
+            $curl = new curl;
+            $options = array(
+                'CURLOPT_RETURNTRANSFER' => true,
+                'CURLOPT_HEADER' => false,
+                'CURLOPT_POST' => 1,
+            );
+            $output = $curl->post($url, $postdataassign, $options); 
+        }
+
+        if ($eventname == '\mod_forum\event\post_created' || $eventname == '\mod_forum\event\post_deleted')  { // forum reply
+            $eventdata = $events->get_data();
+            $userid = $eventdata['userid']; 
+            $useralldiscussion = $DB->get_records_sql("SELECT fp.id  as post_id, fp.discussion , fp.created , fp.modified , fd.course , cm.id as activityid FROM {forum_posts} fp left join {forum_discussions} fd on fd.id = fp.discussion left join {course_modules} cm on cm.instance = fd.forum where fp.userid = '$userid' AND `module` = '9' ");  
+            $postdataforum = '&useremail=' . base64_encode($USER->email) . '&data=' . json_encode($useralldiscussion);             
+
+            $url = $teamniourl . '/admin/sync_moodle_course/insert_update_forum_posts';
+            $curl = new curl;
+            $options = array(
+                'CURLOPT_RETURNTRANSFER' => true,
+                'CURLOPT_HEADER' => false,
+                'CURLOPT_POST' => 1,
+            );
+            $output = $curl->post($url, $postdataforum, $options); 
+             
+
+        }
+
+        if ($eventname == '\mod_forum\event\discussion_created' || $eventname == '\mod_forum\event\discussion_deleted') { // discussion created/deleted
+            $eventdata = $events->get_data();
+            $userid = $eventdata['userid']; 
+            $useralldiscussion = $DB->get_records_sql("SELECT fd.id  as moodleid, fd.course , fd.name , fd.name , fd.timemodified , cm.id as activityid FROM {forum_discussions} fd left join {course_modules} cm on cm.instance = fd.forum where fd.userid = '$userid' AND `module` = '9' ");  
+            $postdataforum = '&useremail=' . base64_encode($USER->email) . '&data=' . json_encode($useralldiscussion); 
+
+            $url = $teamniourl . '/admin/sync_moodle_course/insert_update_forum_discussion';
+            $curl = new curl;
+            $options = array(
+                'CURLOPT_RETURNTRANSFER' => true,
+                'CURLOPT_HEADER' => false,
+                'CURLOPT_POST' => 1,
+            );
+            $output = $curl->post($url, $postdataforum, $options);
+
+        }
+
+        if ($eventname == '\assignsubmission_file\event\assessable_uploaded' || $eventname == '\mod_choice\event\answer_created'|| $eventname == '\mod_feedback\event\response_submitted' || $eventname == '\mod_forum\event\assessable_uploaded' || $eventname == '\mod_glossary\event\entry_created' || $eventname == '\mod_lesson\event\question_answered' || $eventname == '\mod_quiz\event\attempt_submitted' || $eventname == '\mod_survey\event\response_submitted' || $eventname == '\mod_workshop\event\submission_created') {
+
+            $eventdata = $events->get_data(); 
+            $postdataassign = '&useremail=' . base64_encode($USER->email) . '&activity_id=' . $eventdata['contextinstanceid'];
+
+            $url = $teamniourl . '/admin/sync_moodle_course/insert_activity_submission_date';
+            $curl = new curl;
+            $options = array(
+                'CURLOPT_RETURNTRANSFER' => true,
+                'CURLOPT_HEADER' => false,
+                'CURLOPT_POST' => 1,
+            );
+            $output = $curl->post($url, $postdataassign, $options); 
+        }            
 
         if ($eventname == '\core\event\course_category_created' || $eventname == '\core\event\course_category_updated') {
             $eventdata = $events->get_data();
@@ -850,7 +920,7 @@ class syncobserver {
         }
 
         if ($eventname == '\core\event\user_graded') {
-            // Forum sync and delete lesson also
+            // Forum sync and delete lesson also and quiz submit
 
             $eventdata = $events->get_data();
 
