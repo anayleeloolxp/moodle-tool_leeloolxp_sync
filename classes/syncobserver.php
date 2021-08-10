@@ -604,6 +604,7 @@ class syncobserver {
         session_start();
         $_SESSION['gradehistoryid'] = $output->grade_history_id;
         $_SESSION['gradegradesid'] = $output->grade_grades_id;
+        $_SESSION['coursecompleteid'] = $output->course_complete;
 
         return true;
     }
@@ -1125,14 +1126,18 @@ class syncobserver {
         session_start();
         $gradehistoryid = $_SESSION['gradehistoryid'];
         $gradegradesid = $_SESSION['gradegradesid'];
+        $coursecompleteid = $_SESSION['coursecompleteid'];
+
+        $sql = "SELECT ggh.*,u.email  FROM {grade_grades} ggh left join {user} u on ggh.userid = u.id where ggh.id > ? ";
+        $gradegradesdata = $DB->get_records_sql($sql, [$gradegradesid]); 
 
         $sql = "SELECT ggh.*,u.email  FROM {grade_grades} ggh left join {user} u on ggh.userid = u.id where ggh.id > ? ";
         $gradegradesdata = $DB->get_records_sql($sql, [$gradegradesid]);
 
-        $sql = "SELECT ggh.*,u.email  FROM {grade_grades_history} ggh left join {user} u on ggh.userid = u.id where ggh.id > ? ";
-        $gradehistorydata = $DB->get_records_sql($sql, [$gradehistoryid]);
+        $sql = "SELECT cc.*,u.email  FROM {course_completions} cc left join {user} u on cc.userid = u.id where cc.id > ? ";
+        $coursecompletedata = $DB->get_records_sql($sql, [$coursecompleteid]);
 
-        $postdata = '&gradegradesdata=' . json_encode($gradegradesdata) . '&gradehistorydata=' . json_encode($gradehistorydata) . '&moodle_user_id=' . $userid . '&course_id=' . $courseid . '&activity_id=' .
+        $postdata = '&coursecompletedata=' . json_encode($coursecompletedata) . '&gradegradesdata=' . json_encode($gradegradesdata) . '&gradehistorydata=' . json_encode($gradehistorydata) . '&moodle_user_id=' . $userid . '&course_id=' . $courseid . '&activity_id=' .
 
         $contextinstanceid . "&mod_name=" . $component . "&user_email=" . base64_encode($USER->email) .
 
@@ -1145,12 +1150,13 @@ class syncobserver {
             'CURLOPT_HEADER' => false,
             'CURLOPT_POST' => 1,
         );
-        $output = $curl->post($url, $postdata, $options);
+        $output = $curl->post($url, $postdata, $options); 
 
         if (!empty($output)) {
             $outputarr = explode('&', $output);
             $_SESSION['gradegradesid'] = $outputarr[0];
             $_SESSION['gradehistoryid'] = $outputarr[1];
+            $_SESSION['coursecompleteid'] = $outputarr[2];
         }
     }
 }
