@@ -734,6 +734,18 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
 
                         'academicprogram' => $academicprogram,
 
+                        'auth' => $moodeluservalue->auth,
+
+                        'confirmed' => $moodeluservalue->confirmed,
+
+                        'deleted' => $moodeluservalue->deleted,
+
+                        'suspended' => $moodeluservalue->suspended,
+
+                        'timecreated' => $moodeluservalue->timecreated,
+
+                        'timemodified' => $moodeluservalue->timemodified,
+
                         'enrol_sortorder' => $moodeluservalue->enrol_sortorder);
                 } else {
 
@@ -818,6 +830,18 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
                             'enrol_status' => $moodeluservalue->enrol_status,
 
                             'academicprogram' => $academicprogram,
+
+                            'auth' => $moodeluservalue->auth,
+
+                            'confirmed' => $moodeluservalue->confirmed,
+
+                            'deleted' => $moodeluservalue->deleted,
+
+                            'suspended' => $moodeluservalue->suspended,
+
+                            'timecreated' => $moodeluservalue->timecreated,
+
+                            'timemodified' => $moodeluservalue->timemodified,
 
                             'enrol_sortorder' => $moodeluservalue->enrol_sortorder);
                     }
@@ -2079,6 +2103,18 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
 
                         'academicprogram' => $academicprogram,
 
+                        'auth' => $moodeluservalue->auth,
+
+                        'confirmed' => $moodeluservalue->confirmed,
+
+                        'deleted' => $moodeluservalue->deleted,
+
+                        'suspended' => $moodeluservalue->suspended,
+
+                        'timecreated' => $moodeluservalue->timecreated,
+
+                        'timemodified' => $moodeluservalue->timemodified,
+
                         'enrol_sortorder' => $moodeluservalue->enrol_sortorder);
                 } else {
 
@@ -2163,6 +2199,18 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
                             'enrol_status' => $moodeluservalue->enrol_status,
 
                             'academicprogram' => $academicprogram,
+
+                            'auth' => $moodeluservalue->auth,
+
+                            'confirmed' => $moodeluservalue->confirmed,
+
+                            'deleted' => $moodeluservalue->deleted,
+
+                            'suspended' => $moodeluservalue->suspended,
+
+                            'timecreated' => $moodeluservalue->timecreated,
+
+                            'timemodified' => $moodeluservalue->timemodified,
 
                             'enrol_sortorder' => $moodeluservalue->enrol_sortorder);
                     }

@@ -669,10 +669,42 @@ class syncobserver {
         $eventname = $eventdata['eventname'];
         // echo "$eventname";die;
 
-        /* if ($eventname != '\mod_assign\event\course_module_viewed' )  { 
+        /* if ($eventname != '\mod_assign\event\course_module_viewed')  { 
             echo "$eventname";die;
             // file_put_contents(dirname(__FILE__) . "/privacy/test_point.txt", print_r($output,true) );
         } */ 
+
+      /*  if ($eventname == '\core\event\user_deleted')  { //user deleted
+            $eventdata = $events->get_data();
+            $objecttable = $eventdata['objecttable'];
+            $objectid = $eventdata['objectid'];
+            $coursedatamain = $events->get_record_snapshot($objecttable, $objectid);
+            echo "<pre>";print_r($coursedatamain);die;
+
+        } */
+        
+        if ($eventname == '\core\event\user_updated' || $eventname == '\core\event\user_deleted')  {
+        // user suspended && deleted
+            $eventdata = $events->get_data();
+            $userid = $eventdata['objectid'];
+            $userdata = $DB->get_record_sql("select email,deleted,suspended,timemodified,username from {user} where id = '$userid'"); 
+            if ($eventname == '\core\event\user_deleted') {
+                $useremail = str_replace('.'.$userdata->timemodified, '', $userdata->username);
+                $userdata->email = $useremail;
+            }
+
+            $postdataassign = '&userdata=' . json_encode($userdata);
+
+            $url = $teamniourl . '/admin/sync_moodle_course/update_user_data';
+            $curl = new curl;
+            $options = array(
+                'CURLOPT_RETURNTRANSFER' => true,
+                'CURLOPT_HEADER' => false,
+                'CURLOPT_POST' => 1,
+            );
+            $output = $curl->post($url, $postdataassign, $options); 
+            // print_r($output);die;
+        }
 
         if ($eventname == '\mod_assign\event\submission_status_updated')  {
             $eventdata = $events->get_data(); 
