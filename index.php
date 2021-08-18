@@ -439,6 +439,8 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
 
     $groupdata = '';
 
+    $useridscohort = '';
+
     foreach ($alldata as $key => $value) {
         $activityidmoodlearr = array();
 
@@ -474,6 +476,9 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
             Where e.courseid = ?", [$courseidagain]);
 
             foreach ($enrolleduser as $key => $moodeluservalue) {
+
+                $useridscohort .= $moodeluservalue->userid.',';
+
                 $sql = "SELECT {role}.shortname as shortname, {role}.id as roleid
 
                 FROM {role_assignments} LEFT JOIN {user_enrolments} ON {role_assignments}.userid = {user_enrolments}.userid
@@ -728,6 +733,8 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
 
                         'enrol' => $moodeluservalue->enrolmethod,
 
+                        'timeend' => $moodeluservalue->timeend,
+
                         'userid' => $moodeluservalue->userid,
 
                         'enrol_status' => $moodeluservalue->enrol_status,
@@ -824,6 +831,8 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
                             'designation_id' => $userdesignation,
 
                             'enrol' => $moodeluservalue->enrolmethod,
+                            
+                            'timeend' => $moodeluservalue->timeend,
 
                             'userid' => $moodeluservalue->userid,
 
@@ -858,6 +867,21 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
         $activitydescription = $activityidarr[6];
 
         $coursedetailsagain = $DB->get_record('course', array('id' => $courseidagain));
+
+        $useridscohort = chop($useridscohort,",");
+
+        list($insql, $inparams) = $DB->get_in_or_equal($useridscohort);
+        $sql = "SELECT {cohort}.name FROM {cohort_members} left join {cohort} on {cohort}.id={cohort_members}.cohortid WHERE userid $insql";
+        $cohortdata = $DB->get_record_sql($sql, $inparams);
+
+        $cohortname = '';
+
+        if (!empty($cohortdata)) {
+            foreach ($cohortdata as $key => $value) {
+                $cohortname .= $value->name.',';
+            }
+            $cohortname = chop($cohortname,",");
+        }
 
         $groupname = '';
 
@@ -913,6 +937,8 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
             'idnumber' => $coursedetailsagain->idnumber,
 
             'shortname' => $coursedetailsagain->shortname,
+
+            'cohortname' => $cohortname,
 
             'category' => $coursedetailsagain->category,
 
@@ -1804,6 +1830,8 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
 
     $moodleuserstudentarrayy = array();
 
+    $useridscohort = '';
+
     // $groupdata = '';
 
     foreach ($alldata as $key => $value) {
@@ -1824,7 +1852,7 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
         $activityurl = $activityidarr[10];
 
         if ($i == '0') {
-            $enrolleduser = $DB->get_records_sql("SELECT u.*, ue.id, e.courseid, ue.userid, e.status AS enrol_status ,
+            $enrolleduser = $DB->get_records_sql("SELECT u.*, ue.id, e.courseid, ue.userid, ue.timeend, e.status AS enrol_status ,
 
             e.sortorder AS  enrol_sortorder , e.enrol
 
@@ -1839,6 +1867,9 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
             Where e.courseid = ?", [$courseidagain]);
 
             foreach ($enrolleduser as $key => $moodeluservalue) {
+
+                $useridscohort .= $moodeluservalue->userid.',';
+
                 $sql = "SELECT {role}.shortname as shortname, {role}.id as roleid
 
                 FROM {role_assignments} LEFT JOIN {user_enrolments} ON {role_assignments}.userid = {user_enrolments}.userid
@@ -2097,6 +2128,8 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
 
                         'enrol' => $moodeluservalue->enrolmethod,
 
+                        'timeend' => $moodeluservalue->timeend,
+
                         'userid' => $moodeluservalue->userid,
 
                         'enrol_status' => $moodeluservalue->enrol_status,
@@ -2194,6 +2227,8 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
 
                             'enrol' => $moodeluservalue->enrolmethod,
 
+                            'timeend' => $moodeluservalue->timeend,
+
                             'userid' => $moodeluservalue->userid,
 
                             'enrol_status' => $moodeluservalue->enrol_status,
@@ -2227,6 +2262,25 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
         $activitydescription = $activityidarr[6];
 
         $coursedetailsagain = $DB->get_record('course', array('id' => $courseidagain));
+
+        /* $userenroldata = $DB->get_records_sql(" SELECT {user}.email,{user_enrolments}.* FROM {enrol} left join {user_enrolments} on {user_enrolments}.enrolid={enrol}.id left join {user} on {user}.id={user_enrolments}.userid WHERE courseid = ($courseidagain) "); */
+
+        $useridscohort = chop($useridscohort,",");
+
+        list($insql, $inparams) = $DB->get_in_or_equal($useridscohort);
+        $sql = "SELECT {cohort}.name FROM {cohort_members} left join {cohort} on {cohort}.id={cohort_members}.cohortid WHERE userid $insql";
+        $cohortdata = $DB->get_records_sql($sql, $inparams);
+
+        $cohortdata = $DB->get_records_sql(" SELECT {cohort}.name FROM {cohort_members} left join {cohort} on {cohort}.id={cohort_members}.cohortid WHERE userid IN ($useridscohort) ");
+        
+        $cohortname = '';
+
+        if (!empty($cohortdata)) {
+            foreach ($cohortdata as $key => $value) {
+                $cohortname .= $value->name.',';
+            }
+            $cohortname = chop($cohortname,",");
+        } 
 
         $groupname = '';
         $categorydata = $DB->get_records_sql("SELECT * FROM {course_categories} WHERE id = ?", [$coursedetailsagain->category]);
@@ -2281,6 +2335,8 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
             'idnumber' => $coursedetailsagain->idnumber,
 
             'shortname' => $coursedetailsagain->shortname,
+
+            'cohortname' => $cohortname,
 
             'category' => $coursedetailsagain->category,
 
