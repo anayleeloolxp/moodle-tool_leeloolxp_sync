@@ -870,9 +870,7 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
 
         $useridscohort = chop($useridscohort,",");
 
-        list($insql, $inparams) = $DB->get_in_or_equal($useridscohort);
-        $sql = "SELECT {cohort}.name FROM {cohort_members} left join {cohort} on {cohort}.id={cohort_members}.cohortid WHERE userid $insql";
-        $cohortdata = $DB->get_record_sql($sql, $inparams);
+        $cohortdata = $DB->get_records_sql(" SELECT {cohort}.name FROM {cohort_members} left join {cohort} on {cohort}.id={cohort_members}.cohortid WHERE userid IN ($useridscohort) ");
 
         $cohortname = '';
 
@@ -2265,11 +2263,7 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
 
         /* $userenroldata = $DB->get_records_sql(" SELECT {user}.email,{user_enrolments}.* FROM {enrol} left join {user_enrolments} on {user_enrolments}.enrolid={enrol}.id left join {user} on {user}.id={user_enrolments}.userid WHERE courseid = ($courseidagain) "); */
 
-        $useridscohort = chop($useridscohort,",");
-
-        list($insql, $inparams) = $DB->get_in_or_equal($useridscohort);
-        $sql = "SELECT {cohort}.name FROM {cohort_members} left join {cohort} on {cohort}.id={cohort_members}.cohortid WHERE userid $insql";
-        $cohortdata = $DB->get_records_sql($sql, $inparams);
+        $useridscohort = chop($useridscohort,","); 
 
         $cohortdata = $DB->get_records_sql(" SELECT {cohort}.name FROM {cohort_members} left join {cohort} on {cohort}.id={cohort_members}.cohortid WHERE userid IN ($useridscohort) ");
         
