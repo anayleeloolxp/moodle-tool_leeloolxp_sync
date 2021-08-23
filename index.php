@@ -396,6 +396,19 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
 
                                             $iconurl = '';
                                         }
+
+                                        if( isset( $valuefinal->quiztype ) ){
+                                            $quiztype = $valuefinal->quiztype;
+                                        }else{
+                                            $quiztype = '';
+                                        }
+
+                                        if( isset( $valuefinal->difficulty ) ){
+                                            $difficulty = $valuefinal->difficulty;
+                                        }else{
+                                            $difficulty = '1';
+                                        }
+
                                         $querystring = $coursedetails->fullname . "$$" .
 
                                         $sectionsdetails->name . "$$" . $valuefinal->name . "$$" .
@@ -408,7 +421,7 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
 
                                             $activitystartdates . "$$" .
 
-                                            $activityenddatess . "$$" . $tbl . "$$" . $iconurl . "$$" . @$valuefinal->questionsperpage);
+                                            $activityenddatess . "$$" . $tbl . "$$" . $iconurl . "$$" . $quiztype . "$$" . $difficulty);
 
                                         $alldata[] = $querystring;
 
@@ -457,6 +470,10 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
         $activitytype = $activityidarr[9];
 
         $activityurl = $activityidarr[10];
+
+        $quiztypesync = $activityidarr[11];
+
+        $quizdiffsync = $activityidarr[12];
 
         $groupdata = $DB->get_records_sql("SELECT * FROM {groups} groups where groups.courseid = ?", [$courseidagain]);
 
@@ -955,6 +972,10 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
             'activity_type' => $activitytype,
 
             'activity_url' => $activityurl,
+
+            'quiztype' => $quiztypesync,
+
+            'quizdiff' => $quizdiffsync,
 
             'showdescription' => $modulegeneraldata->showdescription,
 
@@ -1849,6 +1870,10 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
 
         $activityurl = $activityidarr[10];
 
+        $quiztypesync = $activityidarr[11];
+
+        $quizdiffsync = $activityidarr[12];
+
         if ($i == '0') {
             $enrolleduser = $DB->get_records_sql("SELECT u.*, ue.id, e.courseid, ue.userid, ue.timeend, e.status AS enrol_status ,
 
@@ -2349,6 +2374,10 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
             'activity_type' => $activitytype,
 
             'activity_url' => $activityurl,
+
+            'quiztype' => $quiztypesync,
+
+            'quizdiff' => $quizdiffsync,
 
             'showdescription' => $modulegeneraldata->showdescription,
 
@@ -2918,6 +2947,18 @@ if (isset($reqaction)) {
                                                 $iconurl = '';
                                             }
 
+                                            if( isset( $valuefinal->quiztype ) ){
+                                                $quiztype = $valuefinal->quiztype;
+                                            }else{
+                                                $quiztype = '';
+                                            }
+    
+                                            if( isset( $valuefinal->difficulty ) ){
+                                                $difficulty = $valuefinal->difficulty;
+                                            }else{
+                                                $difficulty = '1';
+                                            }
+
                                             echo $icon;
 
                                             echo '<span>';
@@ -2990,7 +3031,7 @@ if (isset($reqaction)) {
 
                                                     $activitystartdates . "$$" .
 
-                                                    $activityenddatess . "$$" . $tbl . "$$" . $iconurl);
+                                                    $activityenddatess . "$$" . $tbl . "$$" . $iconurl . "$$" . $quiztype . "$$" . $difficulty);
 
                                                 echo '<li><input class="all_activity_checkbox_single"
 
