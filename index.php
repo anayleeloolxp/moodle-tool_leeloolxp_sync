@@ -403,11 +403,7 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
                                             $quiztype = '';
                                         }
 
-                                        if( isset( $valuefinal->difficulty ) ){
-                                            $difficulty = $valuefinal->difficulty;
-                                        }else{
-                                            $difficulty = '1';
-                                        }
+                                        $difficulty = '1';
 
                                         $querystring = $coursedetails->fullname . "$$" .
 
@@ -2953,11 +2949,7 @@ if (isset($reqaction)) {
                                                 $quiztype = '';
                                             }
     
-                                            if( isset( $valuefinal->difficulty ) ){
-                                                $difficulty = $valuefinal->difficulty;
-                                            }else{
-                                                $difficulty = '1';
-                                            }
+                                            $difficulty = '1';
 
                                             echo $icon;
 
