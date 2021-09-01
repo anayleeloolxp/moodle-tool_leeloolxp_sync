@@ -474,7 +474,7 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
         $groupdata = $DB->get_records_sql("SELECT * FROM {groups} groups where groups.courseid = ?", [$courseidagain]);
 
         if ($i == '0') {
-            $enrolleduser = $DB->get_records_sql("SELECT u.*, ue.id, e.courseid, ue.userid, e.status AS enrol_status ,
+            $enrolleduser = $DB->get_records_sql("SELECT u.*, ue.id, ue.timeend, ue.timestart, e.courseid, ue.userid, e.status AS enrol_status ,
 
             e.sortorder AS  enrol_sortorder , e.enrol
 
@@ -748,6 +748,8 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
 
                         'timeend' => $moodeluservalue->timeend,
 
+                        'timestart' => $moodeluservalue->timestart,
+
                         'userid' => $moodeluservalue->userid,
 
                         'enrol_status' => $moodeluservalue->enrol_status,
@@ -846,6 +848,8 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
                             'enrol' => $moodeluservalue->enrolmethod,
                             
                             'timeend' => $moodeluservalue->timeend,
+
+                            'timestart' => $moodeluservalue->timestart,
 
                             'userid' => $moodeluservalue->userid,
 
@@ -1871,7 +1875,7 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
         $quizdiffsync = $activityidarr[12];
 
         if ($i == '0') {
-            $enrolleduser = $DB->get_records_sql("SELECT u.*, ue.id, e.courseid, ue.userid, ue.timeend, e.status AS enrol_status ,
+            $enrolleduser = $DB->get_records_sql("SELECT u.*, ue.id, e.courseid, ue.userid, ue.timeend, ue.timestart, e.status AS enrol_status ,
 
             e.sortorder AS  enrol_sortorder , e.enrol
 
@@ -2149,6 +2153,8 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
 
                         'timeend' => $moodeluservalue->timeend,
 
+                        'timestart' => $moodeluservalue->timestart,
+
                         'userid' => $moodeluservalue->userid,
 
                         'enrol_status' => $moodeluservalue->enrol_status,
@@ -2247,6 +2253,8 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
                             'enrol' => $moodeluservalue->enrolmethod,
 
                             'timeend' => $moodeluservalue->timeend,
+                            
+                            'timestart' => $moodeluservalue->timestart,
 
                             'userid' => $moodeluservalue->userid,
 
