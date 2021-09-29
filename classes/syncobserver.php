@@ -682,6 +682,27 @@ class syncobserver {
             echo "<pre>";print_r($coursedatamain);die;
 
         } */
+
+        if ($eventname == '\core\event\course_updated')  {
+            // move course/category sync
+            $eventdata = $events->get_data();
+            $courseid = $eventdata['objectid'];
+            $categoryid = $eventdata['other']['updatedfields']['category'];
+
+
+
+            $postdata = '&useremail=' . base64_encode($USER->email) . '&courseid=' . $courseid . '&categoryid=' . $categoryid;
+
+            $url = $teamniourl . '/admin/sync_moodle_course/move_course_category';
+            $curl = new curl;
+            $options = array(
+                'CURLOPT_RETURNTRANSFER' => true,
+                'CURLOPT_HEADER' => false,
+                'CURLOPT_POST' => 1,
+            );
+            $output = $curl->post($url, $postdata, $options);
+            // print_r($output);die;
+        }
         
         if ($eventname == '\core\event\user_updated' || $eventname == '\core\event\user_deleted')  {
         // user suspended && deleted
