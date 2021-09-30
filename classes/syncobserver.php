@@ -744,7 +744,7 @@ class syncobserver {
         if ($eventname == '\mod_forum\event\post_created' || $eventname == '\mod_forum\event\post_deleted')  { // forum reply
             $eventdata = $events->get_data();
             $userid = $eventdata['userid']; 
-            $useralldiscussion = $DB->get_records_sql("SELECT fp.id  as post_id, fp.discussion , fp.created , fp.modified , fd.course , cm.id as activityid FROM {forum_posts} fp left join {forum_discussions} fd on fd.id = fp.discussion left join {course_modules} cm on cm.instance = fd.forum where fp.userid = '$userid' AND `module` = '9' ");  
+            $useralldiscussion = $DB->get_records_sql("SELECT fp.id  as post_id, fp.discussion , fp.created , fp.modified , fd.course , cm.id as activityid FROM {forum_posts} fp left join {forum_discussions} fd on fd.id = fp.discussion left join {course_modules} cm on cm.instance = fd.forum where fp.userid = ? AND `module` = '9' ", [$userid] );  
             $postdataforum = '&useremail=' . base64_encode($USER->email) . '&data=' . json_encode($useralldiscussion);             
 
             $url = $teamniourl . '/admin/sync_moodle_course/insert_update_forum_posts';
@@ -762,7 +762,7 @@ class syncobserver {
         if ($eventname == '\mod_forum\event\discussion_created' || $eventname == '\mod_forum\event\discussion_deleted') { // discussion created/deleted
             $eventdata = $events->get_data();
             $userid = $eventdata['userid']; 
-            $useralldiscussion = $DB->get_records_sql("SELECT fd.id  as moodleid, fd.course , fd.name , fd.name , fd.timemodified , cm.id as activityid FROM {forum_discussions} fd left join {course_modules} cm on cm.instance = fd.forum where fd.userid = '$userid' AND `module` = '9' ");  
+            $useralldiscussion = $DB->get_records_sql("SELECT fd.id  as moodleid, fd.course , fd.name , fd.name , fd.timemodified , cm.id as activityid FROM {forum_discussions} fd left join {course_modules} cm on cm.instance = fd.forum where fd.userid = ? AND `module` = '9' ", [$userid]);  
             $postdataforum = '&useremail=' . base64_encode($USER->email) . '&data=' . json_encode($useralldiscussion); 
 
             $url = $teamniourl . '/admin/sync_moodle_course/insert_update_forum_discussion';
@@ -794,7 +794,7 @@ class syncobserver {
         if ($eventname == '\core\event\course_category_created' || $eventname == '\core\event\course_category_updated') {
             $eventdata = $events->get_data();
             $iddd = $eventdata['objectid'];
-            $catdatamin = $DB->get_records_sql("select * from {course_categories} where id = '$iddd'");
+            $catdatamin = $DB->get_records_sql("select * from {course_categories} where id = ?", [$iddd]);
 
             $postdataworkshopgrade = '&useremail=' . base64_encode($USER->email) . '&cat_data=' . json_encode($catdatamin);
 
@@ -848,7 +848,7 @@ class syncobserver {
             $eventdata = $events->get_data();
             $courseid = $eventdata['courseid'];
             $sql = "SELECT email FROM {user} where id = ?";
-            $userscompletedcourse = $DB->get_records_sql("SELECT DISTINCT user.email , cc.id , cc.timestarted , cc.reaggregate FROM {course_completions} cc left join {user} user on cc.userid = user.id where cc.course = '$courseid' group by cc.userid ");
+            $userscompletedcourse = $DB->get_records_sql("SELECT DISTINCT user.email , cc.id , cc.timestarted , cc.reaggregate FROM {course_completions} cc left join {user} user on cc.userid = user.id where cc.course = ? group by cc.userid ", [$courseid]);
 
             $postdatamain = '&userscompletedcourse=' . json_encode($userscompletedcourse) . '&email=' . base64_encode($USER->email) . '&is_bulk_insert=' . $courseid;
 
@@ -867,7 +867,7 @@ class syncobserver {
             $relateduserid = $eventdata['relateduserid'];
             $rolenames = '';
 
-            $userroles = $DB->get_records_sql("SELECT  DISTINCT rol.shortname  FROM {role_assignments} ra left join {role} rol on ra.roleid = rol.id where ra.userid = '$relateduserid' group by ra.roleid ");
+            $userroles = $DB->get_records_sql("SELECT  DISTINCT rol.shortname  FROM {role_assignments} ra left join {role} rol on ra.roleid = rol.id where ra.userid = ? group by ra.roleid ", [$relateduserid]);
 
             if (!empty($userroles)) {
                 foreach ($userroles as $key => $value) {
@@ -1167,7 +1167,7 @@ class syncobserver {
             $gredegradedatastring = '';
 
             if ($itemdata->itemtype == 'category' && !empty($itemdata->iteminstance)) {
-                $gradecategorydata = $DB->get_records_sql("select * from {grade_categories} where id = '$itemdata->iteminstance' ");
+                $gradecategorydata = $DB->get_records_sql("select * from {grade_categories} where id = ? ", [$itemdata->iteminstance]);
                 $gradecategory = '&grade_category=' . json_encode($gradecategorydata);
             }
         } else {
