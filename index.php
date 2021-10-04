@@ -656,7 +656,7 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
                 }
 
                 $academicprogramfield = $DB->get_record_sql("SELECT DISTINCT data FROM {user_info_field} field left join {user_info_data} on {user_info_data}.fieldid = field.id where field.name LIKE '%Academic program%' and {user_info_data}.userid= ?", [$enrolleduserid]);
-                
+
                 if (isset($academicprogramfield->data) && $academicprogramfield->data != '') {
                     $academicprogram = $academicprogramfield->data;
                 } else {
@@ -846,7 +846,7 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
                             'designation_id' => $userdesignation,
 
                             'enrol' => $moodeluservalue->enrolmethod,
-                            
+
                             'timeend' => $moodeluservalue->timeend,
 
                             'timestart' => $moodeluservalue->timestart,
@@ -887,15 +887,18 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
 
         $useridscohort = chop($useridscohort,",");
 
-        $cohortdata = $DB->get_records_sql(" SELECT {cohort}.name FROM {cohort_members} left join {cohort} on {cohort}.id={cohort_members}.cohortid WHERE userid IN ($useridscohort) ");
+        if (!empty($useridscohort)) {
 
-        $cohortname = '';
+            $cohortdata = $DB->get_records_sql(" SELECT {cohort}.name FROM {cohort_members} left join {cohort} on {cohort}.id={cohort_members}.cohortid WHERE userid IN ($useridscohort) ");
 
-        if (!empty($cohortdata)) {
-            foreach ($cohortdata as $key => $value) {
-                $cohortname .= $value->name.',';
+            $cohortname = '';
+
+            if (!empty($cohortdata)) {
+                foreach ($cohortdata as $key => $value) {
+                    $cohortname .= $value->name.',';
+                }
+                $cohortname = chop($cohortname,",");
             }
-            $cohortname = chop($cohortname,",");
         }
 
         $groupname = '';
@@ -2061,7 +2064,7 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
                 }
 
                 $academicprogramfield = $DB->get_record_sql("SELECT DISTINCT data FROM {user_info_field} field left join {user_info_data} on {user_info_data}.fieldid = field.id where field.name LIKE '%Academic program%' and {user_info_data}.userid= ?", [$enrolleduserid]);
-                
+
                 if (isset($academicprogramfield->data) && $academicprogramfield->data != '') {
                     $academicprogram = $academicprogramfield->data;
                 } else {
@@ -2253,7 +2256,7 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
                             'enrol' => $moodeluservalue->enrolmethod,
 
                             'timeend' => $moodeluservalue->timeend,
-                            
+
                             'timestart' => $moodeluservalue->timestart,
 
                             'userid' => $moodeluservalue->userid,
@@ -2292,18 +2295,21 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
 
         /* $userenroldata = $DB->get_records_sql(" SELECT {user}.email,{user_enrolments}.* FROM {enrol} left join {user_enrolments} on {user_enrolments}.enrolid={enrol}.id left join {user} on {user}.id={user_enrolments}.userid WHERE courseid = ($courseidagain) "); */
 
-        $useridscohort = chop($useridscohort,","); 
+        $useridscohort = chop($useridscohort,",");
 
-        $cohortdata = $DB->get_records_sql(" SELECT {cohort}.name FROM {cohort_members} left join {cohort} on {cohort}.id={cohort_members}.cohortid WHERE userid IN ($useridscohort) ");
-        
-        $cohortname = '';
+        if (!empty($useridscohort)) {
 
-        if (!empty($cohortdata)) {
-            foreach ($cohortdata as $key => $value) {
-                $cohortname .= $value->name.',';
+            $cohortdata = $DB->get_records_sql(" SELECT {cohort}.name FROM {cohort_members} left join {cohort} on {cohort}.id={cohort_members}.cohortid WHERE userid IN ($useridscohort) ");
+
+            $cohortname = '';
+
+            if (!empty($cohortdata)) {
+                foreach ($cohortdata as $key => $value) {
+                    $cohortname .= $value->name.',';
+                }
+                $cohortname = chop($cohortname,",");
             }
-            $cohortname = chop($cohortname,",");
-        } 
+        }
 
         $groupname = '';
         $categorydata = $DB->get_records_sql("SELECT * FROM {course_categories} WHERE id = ?", [$coursedetailsagain->category]);
@@ -2956,7 +2962,7 @@ if (isset($reqaction)) {
                                             }else{
                                                 $quiztype = '';
                                             }
-    
+
                                             $difficulty = '1';
 
                                             echo $icon;
