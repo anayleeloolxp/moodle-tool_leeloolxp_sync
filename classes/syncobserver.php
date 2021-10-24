@@ -44,6 +44,8 @@ class syncobserver {
     public static function tool_leeloolxp_sync_get_leelooinstall() {
 
         global $SESSION;
+        global $CFG;
+        require_once($CFG->dirroot . '/lib/filelib.php');
 
         if (isset($SESSION->sync_leelooinstall)) {
             return $SESSION->sync_leelooinstall;
@@ -591,6 +593,9 @@ class syncobserver {
             return true;
         }
 
+        global $CFG;
+        require_once($CFG->dirroot . '/lib/filelib.php');
+
         $postdata = '&moodle_cat_id=0';
         $url = $teamniourl . '/admin/sync_moodle_course/check_grade_and_history';
         $curl = new curl;
@@ -621,6 +626,9 @@ class syncobserver {
         if ($teamniourl == 'no') {
             return true;
         }
+
+        global $CFG;
+        require_once($CFG->dirroot . '/lib/filelib.php');
 
         $postdata = '&moodle_cat_id=' . $events->get_data()['objectid'];
         $url = $teamniourl . '/admin/sync_moodle_course/delete_category_from_moodle/';
