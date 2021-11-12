@@ -669,6 +669,16 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
                 $moodleurlpic = new moodle_url('/user/pix.php/' . $moodeluservalue->id . '/f.jpg');
 
                 if ($usertype == 'student') {
+
+                    $tempdatacon = $DB->get_record_sql(" SELECT GROUP_CONCAT(id) as ids FROM {context} WHERE `instanceid` = '$courseidagain' ");
+
+                    $userrolename = 'student';
+
+                    if (!empty($tempdatacon)) {
+                        $userrolename = $DB->get_record_sql(" SELECT r.shortname FROM {role_assignments} as ra left join {role} as r on r.id = ra.roleid WHERE `contextid` IN ($tempdatacon->ids) and userid = $moodeluservalue->userid ");  
+                        $userrolename = $userrolename->shortname;
+                    }   
+
                     $lastlogin = date('Y-m-d h:i:s', $moodeluservalue->lastlogin);
 
                     $moodleuserstudentarrayy[] = array(
@@ -682,6 +692,8 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
                         'user_pic_moodle_url' => $moodleurlpic,
 
                         'email' => base64_encode($moodeluservalue->email),
+
+                        'course_role' => $userrolename,
 
                         'city' => $moodeluservalue->city,
 
@@ -772,6 +784,15 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
                         'enrol_sortorder' => $moodeluservalue->enrol_sortorder);
                 } else {
 
+                    $tempdatacon = $DB->get_record_sql(" SELECT GROUP_CONCAT(id) as ids FROM {context} WHERE `instanceid` = '$courseidagain' ");
+
+                    $userrolename = 'student';
+
+                    if (!empty($tempdatacon)) {
+                        $userrolename = $DB->get_record_sql(" SELECT r.shortname FROM {role_assignments} as ra left join {role} as r on r.id = ra.roleid WHERE `contextid` IN ($tempdatacon->ids) and userid = $moodeluservalue->userid ");  
+                        $userrolename = $userrolename->shortname;
+                    }   
+
                     if ($usertype == 'teacher') {
                         $moodeluservalueteacher = $moodeluservalue;
 
@@ -785,6 +806,8 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
                             'user_pic_moodle_url' => $moodleurlpic,
 
                             'email' => base64_encode($moodeluservalueteacher->email),
+
+                            'course_role' => $userrolename,
 
                             'city' => $moodeluservalueteacher->city,
 
@@ -2077,6 +2100,16 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
                 $moodleurlpic = new moodle_url('/user/pix.php/' . $moodeluservalue->id . '/f.jpg');
 
                 if ($usertype == 'student') {
+
+                    $tempdatacon = $DB->get_record_sql(" SELECT GROUP_CONCAT(id) as ids FROM {context} WHERE `instanceid` = '$courseidagain' ");
+
+                    $userrolename = 'student';
+
+                    if (!empty($tempdatacon)) {
+                        $userrolename = $DB->get_record_sql(" SELECT r.shortname FROM {role_assignments} as ra left join {role} as r on r.id = ra.roleid WHERE `contextid` IN ($tempdatacon->ids) and userid = $moodeluservalue->userid ");  
+                        $userrolename = $userrolename->shortname;
+                    }                          
+
                     $lastlogin = date('Y-m-d h:i:s', $moodeluservalue->lastlogin);
 
                     $moodleuserstudentarrayy[] = array(
@@ -2090,6 +2123,8 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
                         'user_pic_moodle_url' => $moodleurlpic,
 
                         'email' => base64_encode($moodeluservalue->email),
+
+                        'course_role' => $userrolename,
 
                         'city' => $moodeluservalue->city,
 
@@ -2180,6 +2215,15 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
                         'enrol_sortorder' => $moodeluservalue->enrol_sortorder);
                 } else {
 
+                    $tempdatacon = $DB->get_record_sql(" SELECT GROUP_CONCAT(id) as ids FROM {context} WHERE `instanceid` = '$courseidagain' ");
+
+                    $userrolename = 'student';
+
+                    if (!empty($tempdatacon)) {
+                        $userrolename = $DB->get_record_sql(" SELECT r.shortname FROM {role_assignments} as ra left join {role} as r on r.id = ra.roleid WHERE `contextid` IN ($tempdatacon->ids) and userid = $moodeluservalue->userid ");  
+                        $userrolename = $userrolename->shortname;
+                    } 
+
                     if ($usertype == 'teacher') {
                         $moodeluservalueteacher = $moodeluservalue;
 
@@ -2193,6 +2237,8 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
                             'user_pic_moodle_url' => $moodleurlpic,
 
                             'email' => base64_encode($moodeluservalueteacher->email),
+
+                            'course_role' => $userrolename,
 
                             'city' => $moodeluservalueteacher->city,
 
