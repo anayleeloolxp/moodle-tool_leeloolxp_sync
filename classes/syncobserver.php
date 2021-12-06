@@ -689,7 +689,60 @@ class syncobserver {
             $coursedatamain = $events->get_record_snapshot($objecttable, $objectid);
             echo "<pre>";print_r($coursedatamain);die;
 
-        } */
+        } */ 
+
+        if ( $eventname == '\core\event\cohort_member_removed' || $eventname == '\core\event\cohort_member_added' )  { 
+            
+            $eventdata = $events->get_data();
+            $cohortid = $eventdata['objectid'];
+            $timecreated = $eventdata['timecreated'];
+
+            $userid = $eventdata['relateduserid'];
+            $userdata = $DB->get_record_sql("select email from {user} where id = '$userid'");              
+            $postdata = '&useremail=' . base64_encode($userdata->email) . '&cohortid=' . $cohortid . '&timeadded=' . $timecreated;
+
+            if ($eventname == '\core\event\cohort_member_removed')  {
+                $postdata .= '&is_remove=1';
+            }
+
+            $url = $teamniourl . '/admin/sync_moodle_course/add_remove_cohort_members';
+            $curl = new curl;
+            $options = array(
+                'CURLOPT_RETURNTRANSFER' => true,
+                'CURLOPT_HEADER' => false,
+                'CURLOPT_POST' => 1,
+            );
+            $output = $curl->post($url, $postdata, $options);
+            // print_r($output);die;
+        } 
+
+        if ($eventname == '\core\event\cohort_created'|| $eventname ==  '\core\event\cohort_updated' || $eventname == '\core\event\cohort_deleted')  {
+             
+            $eventdata = $events->get_data();
+            $objecttable = $eventdata['objecttable'];
+            $objectid = $eventdata['objectid'];
+            $cohortdata = $events->get_record_snapshot($objecttable, $objectid);
+            // echo "<pre>";print_r($cohortdata);echo "<br>"; //die;
+            unset($cohortdata->description_editor,$cohortdata->description);
+            // $cohortdata->description = strip_tags($cohortdata->description);
+            // print_r($cohortdata->description);die;
+
+            $postdata = '&useremail=' . base64_encode($USER->email) . '&cohortdata=' . json_encode($cohortdata);
+
+            if ($eventname == '\core\event\cohort_deleted')  {
+                $postdata .= '&is_deleted=1';
+            }
+
+            $url = $teamniourl . '/admin/sync_moodle_course/insert_update_cohort';
+            $curl = new curl;
+            $options = array(
+                'CURLOPT_RETURNTRANSFER' => true,
+                'CURLOPT_HEADER' => false,
+                'CURLOPT_POST' => 1,
+            );
+            $output = $curl->post($url, $postdata, $options);
+            // print_r($output);die;
+        }
 
         if ($eventname == '\core\event\course_updated')  {
             // move course/category sync

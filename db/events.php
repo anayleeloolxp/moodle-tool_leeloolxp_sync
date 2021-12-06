@@ -61,6 +61,31 @@ $observers = array(
     ),*/
 
     array(
+        'eventname' => '\core\event\cohort_member_added',
+        'callback' => '\tool_leeloolxp_sync\syncobserver::badge_createdd',
+    ),
+
+    array(
+        'eventname' => '\core\event\cohort_member_removed',
+        'callback' => '\tool_leeloolxp_sync\syncobserver::badge_createdd',
+    ),
+
+    array(
+        'eventname' => '\core\event\cohort_created',
+        'callback' => '\tool_leeloolxp_sync\syncobserver::badge_createdd',
+    ),
+
+    array(
+        'eventname' => '\core\event\cohort_updated',
+        'callback' => '\tool_leeloolxp_sync\syncobserver::badge_createdd',
+    ),
+
+    array(
+        'eventname' => '\core\event\cohort_deleted',
+        'callback' => '\tool_leeloolxp_sync\syncobserver::badge_createdd',
+    ),
+
+    array(
         'eventname' => '\core\event\course_updated',
         'callback' => '\tool_leeloolxp_sync\syncobserver::badge_createdd',
     ),
