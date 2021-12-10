@@ -1242,10 +1242,11 @@ class syncobserver {
         $gradegradesid = $_SESSION['gradegradesid'];
         $coursecompleteid = $_SESSION['coursecompleteid'];
 
-        $sql = "SELECT ggh.*,u.email  FROM {grade_grades} ggh left join {user} u on ggh.userid = u.id where ggh.id > ? ";
-        $gradegradesdata = $DB->get_records_sql($sql, [$gradegradesid]); 
+        /* $sql = "SELECT ggh.*,u.email  FROM {grade_grades} ggh left join {user} u on ggh.userid = u.id where ggh.id > ? ";
+        $gradegradesdata = $DB->get_records_sql($sql, [$gradegradesid]); */
 
-        $sql = "SELECT ggh.*,u.email  FROM {grade_grades} ggh left join {user} u on ggh.userid = u.id where ggh.id > ? ";
+        // $sql = "SELECT ggh.*,u.email  FROM {grade_grades} ggh left join {user} u on ggh.userid = u.id where ggh.id > ? ";
+        $sql = "SELECT gg.*,u.email,cm.id as activity_id FROM {grade_grades} as gg left join {user} u on gg.userid = u.id left join  {grade_items} as gi on gi.id = gg.itemid left join {modules} as module on module.name = gi.itemmodule left join {course_modules} as cm on cm.course = gi.courseid AND cm.module = module.id AND cm.instance = gi.iteminstance where gg.id > ? ";
         $gradegradesdata = $DB->get_records_sql($sql, [$gradegradesid]);
 
         $sql = "SELECT cc.*,u.email  FROM {course_completions} cc left join {user} u on cc.userid = u.id where cc.id > ? ";
