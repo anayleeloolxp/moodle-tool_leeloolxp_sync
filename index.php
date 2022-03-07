@@ -670,12 +670,18 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
 
                 if ($usertype == 'student') {
 
-                    $tempdatacon = $DB->get_record_sql(" SELECT GROUP_CONCAT(id) as ids FROM {context} WHERE `instanceid` = '$courseidagain' ");
+                    $tempdatacon = $DB->get_records_sql(" SELECT id FROM {context} WHERE instanceid = ?", [$courseidagain]);
+                    if( !empty($tempdatacon) ){
+                        $temptdataarr = array_keys($tempdatacon);
+                        $temptdatastr = implode(',', $temptdataarr);
 
+                    }else{
+                        $temptdatastr = 0;
+                    }
                     $userrolename = 'student';
 
                     if (!empty($tempdatacon)) {
-                        $userrolename = $DB->get_record_sql(" SELECT r.shortname FROM {role_assignments} as ra left join {role} as r on r.id = ra.roleid WHERE `contextid` IN ($tempdatacon->ids) and userid = $moodeluservalue->userid ");  
+                        $userrolename = $DB->get_record_sql(" SELECT r.shortname FROM {role_assignments} as ra left join {role} as r on r.id = ra.roleid WHERE contextid IN (?) and userid = ? ",[$tempdataconstr, $moodeluservalue->userid]);  
                         $userrolename = $userrolename->shortname;
                     }   
 
@@ -784,12 +790,19 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
                         'enrol_sortorder' => $moodeluservalue->enrol_sortorder);
                 } else {
 
-                    $tempdatacon = $DB->get_record_sql(" SELECT GROUP_CONCAT(id) as ids FROM {context} WHERE `instanceid` = '$courseidagain' ");
+                    $tempdatacon = $DB->get_records_sql(" SELECT id FROM {context} WHERE instanceid = ?", [$courseidagain]);
+                    if( !empty($tempdatacon) ){
+                        $temptdataarr = array_keys($tempdatacon);
+                        $temptdatastr = implode(',', $temptdataarr);
+
+                    }else{
+                        $temptdatastr = 0;
+                    }
 
                     $userrolename = 'student';
 
                     if (!empty($tempdatacon)) {
-                        $userrolename = $DB->get_record_sql(" SELECT r.shortname FROM {role_assignments} as ra left join {role} as r on r.id = ra.roleid WHERE `contextid` IN ($tempdatacon->ids) and userid = $moodeluservalue->userid ");  
+                        $userrolename = $DB->get_record_sql(" SELECT r.shortname FROM {role_assignments} as ra left join {role} as r on r.id = ra.roleid WHERE contextid IN (?) and userid = ? ",[$tempdataconstr, $moodeluservalue->userid]);   
                         $userrolename = $userrolename->shortname;
                     }   
 
@@ -2101,12 +2114,20 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
 
                 if ($usertype == 'student') {
 
-                    $tempdatacon = $DB->get_record_sql(" SELECT GROUP_CONCAT(id) as ids FROM {context} WHERE `instanceid` = '$courseidagain' ");
+                    $tempdatacon = $DB->get_records_sql(" SELECT id FROM {context} WHERE instanceid = ?", [$courseidagain]);
+                    
+                    if( !empty($tempdatacon) ){
+                        $temptdataarr = array_keys($tempdatacon);
+                        $temptdatastr = implode(',', $temptdataarr);
+
+                    }else{
+                        $temptdatastr = 0;
+                    }
 
                     $userrolename = 'student';
 
                     if (!empty($tempdatacon)) {
-                        $userrolename = $DB->get_record_sql(" SELECT r.shortname FROM {role_assignments} as ra left join {role} as r on r.id = ra.roleid WHERE `contextid` IN ($tempdatacon->ids) and userid = $moodeluservalue->userid ");  
+                        $userrolename = $DB->get_record_sql(" SELECT r.shortname FROM {role_assignments} as ra left join {role} as r on r.id = ra.roleid WHERE contextid IN (?) and userid = ? ",[$tempdataconstr, $moodeluservalue->userid]);  
                         $userrolename = $userrolename->shortname;
                     }                          
 
@@ -2215,12 +2236,20 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
                         'enrol_sortorder' => $moodeluservalue->enrol_sortorder);
                 } else {
 
-                    $tempdatacon = $DB->get_record_sql(" SELECT GROUP_CONCAT(id) as ids FROM {context} WHERE `instanceid` = '$courseidagain' ");
+                    $tempdatacon = $DB->get_records_sql(" SELECT id FROM {context} WHERE instanceid = ?", [$courseidagain]);
+                    
+                    if( !empty($tempdatacon) ){
+                        $temptdataarr = array_keys($tempdatacon);
+                        $temptdatastr = implode(',', $temptdataarr);
+
+                    }else{
+                        $temptdatastr = 0;
+                    }
 
                     $userrolename = 'student';
 
                     if (!empty($tempdatacon)) {
-                        $userrolename = $DB->get_record_sql(" SELECT r.shortname FROM {role_assignments} as ra left join {role} as r on r.id = ra.roleid WHERE `contextid` IN ($tempdatacon->ids) and userid = $moodeluservalue->userid ");  
+                        $userrolename = $DB->get_record_sql(" SELECT r.shortname FROM {role_assignments} as ra left join {role} as r on r.id = ra.roleid WHERE contextid IN (?) and userid = ? ",[$tempdataconstr, $moodeluservalue->userid]);  
                         $userrolename = $userrolename->shortname;
                     } 
 
