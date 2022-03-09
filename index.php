@@ -472,6 +472,17 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
 
         $quizdiffsync = $activityidarr[12];
 
+        $sql = "SELECT cs.id as cid , cs.name as cname , cs.section as csection , cs.sequence as csequence, cfo.* FROM {course_sections} cs  left join {course_format_options} cfo ON ( cfo.sectionid = cs.id OR cfo.value = cs.section )   WHERE course = ? and courseid = ? and ( cfo.name LIKE 'parent' OR cfo.name LIKE 'hiddensections' OR cfo.name LIKE 'coursedisplay') AND cs.section != 0 GROUP BY cs.id ORDER BY cs.section ASC "; 
+
+        $coursehierarchy = $DB->get_records_sql($sql, [ $courseidagain,$courseidagain]);
+
+        if (empty($coursehierarchy)) {
+            
+            $sql = "SELECT id as cid,name as cname,section as csection ,sequence as csequence,id as sectionid FROM {course_sections} cs  WHERE course = ? AND section != 0 AND section != '0'   ";
+
+            $coursehierarchy = $DB->get_records_sql($sql, [ $courseidagain]);
+        }
+
         $groupdata = $DB->get_records_sql("SELECT * FROM {groups} groups where groups.courseid = ?", [$courseidagain]);
 
         if ($i == '0') {
@@ -974,6 +985,8 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
             'moodle_users_teachers' => json_encode($moodleuserteacherarrayy),
 
             'course_section_activity' => $activityset,
+
+            'coursehierarchy' => json_encode($coursehierarchy),
 
             'is_quiz_task' => 0,
 
@@ -1914,6 +1927,17 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
 
         $quizdiffsync = $activityidarr[12];
 
+        $sql = "SELECT cs.id as cid , cs.name as cname , cs.section as csection , cs.sequence as csequence, cfo.* FROM {course_sections} cs  left join {course_format_options} cfo ON ( cfo.sectionid = cs.id OR cfo.value = cs.section )   WHERE course = ? and courseid = ? and ( cfo.name LIKE 'parent' OR cfo.name LIKE 'hiddensections' OR cfo.name LIKE 'coursedisplay') AND cs.section != 0 GROUP BY cs.id ORDER BY cs.section ASC "; 
+
+        $coursehierarchy = $DB->get_records_sql($sql, [ $courseidagain,$courseidagain]);
+
+        if (empty($coursehierarchy)) {
+            
+            $sql = "SELECT id as cid,name as cname,section as csection ,sequence as csequence,id as sectionid FROM {course_sections} cs  WHERE course = ? AND section != 0 AND section != '0'   ";
+
+            $coursehierarchy = $DB->get_records_sql($sql, [ $courseidagain]);
+        }
+
         if ($i == '0') {
             $enrolleduser = $DB->get_records_sql("SELECT u.*, ue.id, e.courseid, ue.userid, ue.timeend, ue.timestart, e.status AS enrol_status ,
 
@@ -2422,6 +2446,8 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
             'moodle_users_teachers' => json_encode($moodleuserteacherarrayy),
 
             'course_section_activity' => $activityset,
+
+            'coursehierarchy' => json_encode($coursehierarchy),
 
             'is_quiz_task' => 0,
 
