@@ -1910,6 +1910,7 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
         $activityidmoodlearr = array();
 
         $activityset = str_replace("'", '', $value);
+        // echo "<pre>";print_r($activityset);die;
 
         $activityidarr = explode('$$', $activityset);
 
@@ -2418,7 +2419,7 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
         $gradeitems = $DB->get_records_sql("SELECT * FROM {grade_items} WHERE courseid = ?", [$courseidagain]);
 
         $tempdata = explode('$$', $activityset);
-
+        // echo "<pre>";print_r($tempdata);die;
         $tagdata = [];
 
         if (!empty($tempdata[3])) {
@@ -2523,7 +2524,7 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
 
         );
         // echo "<pre>"; print_r($moodleuserstudentarrayy);die;
-        // print_r($curl->post($url, $post, $options));die;
+        // print_r($curl->post($url, $post, $options));die; 
         if (!$response = $curl->post($url, $post, $options)) {
             return true;
         }
@@ -2566,7 +2567,7 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
         }
 
         $i++;
-    }
+    } 
 
     if (isset($reqquizsync)) {
         foreach ($reqquizsync as $key => $value) {
@@ -3027,6 +3028,7 @@ if (isset($reqaction)) {
                                                     {tool_leeloolxp_sync}
 
                                                     where activityid = ? and enabled = '1' order by id desc limit 1", [$activityids->id]);
+                                            $sectiondataa = $DB->get_record_sql("SELECT section FROM {course_modules} WHERE id = ? ", [$activityids->id]);
 
                                             $enabled = false;
 
@@ -3139,7 +3141,9 @@ if (isset($reqaction)) {
 
                                                     $activitystartdates . "$$" .
 
-                                                    $activityenddatess . "$$" . $tbl . "$$" . $iconurl . "$$" . $quiztype . "$$" . $difficulty);
+                                                    $activityenddatess . "$$" . $tbl . "$$" . $iconurl . "$$" . $quiztype . "$$" . $difficulty). "$$" .
+
+                                                $sectiondataa->section ;
 
                                                 echo '<li><input class="all_activity_checkbox_single"
 
