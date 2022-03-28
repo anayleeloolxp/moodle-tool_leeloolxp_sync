@@ -1364,7 +1364,7 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
 
 
 
-                    $tempdatacon = $DB->get_records_sql(" SELECT id FROM {context} WHERE instanceid = ? AND depth = '3' ", [$courseidagain]);
+                    $tempdatacon = $DB->get_records_sql(" SELECT id FROM {context} WHERE instanceid = ? AND depth = '3' ORDER BY id DESC ", [$courseidagain]);
 
                     if( !empty($tempdatacon) ){ 
 
@@ -1602,7 +1602,7 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
 
 
 
-                    $tempdatacon = $DB->get_records_sql(" SELECT id FROM {context} WHERE instanceid = ? AND depth = '3' ", [$courseidagain]);
+                    $tempdatacon = $DB->get_records_sql(" SELECT id FROM {context} WHERE instanceid = ? AND depth = '3' ORDER BY id DESC ", [$courseidagain]);
 
                     if( !empty($tempdatacon) ){ 
 
@@ -4276,7 +4276,7 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
 
 
 
-                    $tempdatacon = $DB->get_record_sql(" SELECT id FROM {context} WHERE instanceid = ? AND depth = '3' ", [$courseidagain]); 
+                    $tempdatacon = $DB->get_record_sql(" SELECT id FROM {context} WHERE instanceid = ? AND depth = '3'  ORDER BY id DESC", [$courseidagain]); 
                     
 
                     if( !empty($tempdatacon) ){ 
@@ -4517,7 +4517,7 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
 
 
 
-                    $tempdatacon = $DB->get_records_sql(" SELECT id FROM {context} WHERE instanceid = ? AND depth = '3'", [$courseidagain]);
+                    $tempdatacon = $DB->get_records_sql(" SELECT id FROM {context} WHERE instanceid = ? AND depth = '3' ORDER BY id DESC", [$courseidagain]);
 
                     
 
