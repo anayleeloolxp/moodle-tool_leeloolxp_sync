@@ -1222,7 +1222,17 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
 
                         $mteacherdegree = $ssopluginconfig->$teacherdegree;
 
+                        if (empty($mteacherinstitution)) {
+                            $mteacherinstitution = '';
+                        }
 
+                        if (empty($mteacherdepartment)) {
+                            $mteacherdepartment = '';
+                        }
+
+                        if (empty($mteacherdegree)) {
+                            $mteacherdegree = '';
+                        }
 
                         $teacherdbsetarr[$si] = $mteacherrole . "_" .
 
@@ -1368,7 +1378,7 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
 
 
 
-                    $tempdatacon = $DB->get_records_sql(" SELECT id FROM {context} WHERE instanceid = ? AND depth = '3' ORDER BY id DESC ", [$courseidagain]);
+                    $tempdatacon = $DB->get_record_sql(" SELECT id FROM {context} WHERE instanceid = ? AND depth = '3' ORDER BY id DESC ", [$courseidagain]);
 
                     if( !empty($tempdatacon) ){ 
 
@@ -1606,7 +1616,7 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
 
 
 
-                    $tempdatacon = $DB->get_records_sql(" SELECT id FROM {context} WHERE instanceid = ? AND depth = '3' ORDER BY id DESC ", [$courseidagain]);
+                    $tempdatacon = $DB->get_record_sql(" SELECT id FROM {context} WHERE instanceid = ? AND depth = '3' ORDER BY id DESC ", [$courseidagain]);
 
                     if( !empty($tempdatacon) ){ 
 
@@ -4134,7 +4144,17 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
 
                         $mteacherdegree = $ssopluginconfig->$teacherdegree;
 
+                        if (empty($mteacherinstitution)) {
+                            $mteacherinstitution = '';
+                        }
 
+                        if (empty($mteacherdepartment)) {
+                            $mteacherdepartment = '';
+                        }
+
+                        if (empty($mteacherdegree)) {
+                            $mteacherdegree = '';
+                        }
 
                         $teacherdbsetarr[$si] = $mteacherrole . "_" .
 
@@ -4303,12 +4323,15 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
 
                     if (!empty($temptdatastr)) {
 
+
                         $userrolename = $DB->get_record_sql(" SELECT r.shortname FROM {role_assignments} as ra left join {role} as r on r.id = ra.roleid WHERE contextid IN (?) and userid = ? ",[$temptdatastr, $moodeluservalue->userid]);  
+                        
+                        
 
                         $userrolename = $userrolename->shortname; 
 
-                    }                          
-
+                    } 
+                                            
 
 
                     $lastlogin = date('Y-m-d h:i:s', $moodeluservalue->lastlogin);
@@ -4521,7 +4544,7 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
 
 
 
-                    $tempdatacon = $DB->get_records_sql(" SELECT id FROM {context} WHERE instanceid = ? AND depth = '3' ORDER BY id DESC", [$courseidagain]);
+                    $tempdatacon = $DB->get_record_sql(" SELECT id FROM {context} WHERE instanceid = ? AND depth = '3' ORDER BY id DESC", [$courseidagain]);
 
                     
 
@@ -4535,8 +4558,7 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
 
                         $temptdatastr = 0;
 
-                    }
-
+                    } 
 
 
                     $userrolename = 'student';
@@ -4546,8 +4568,7 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
                     if (!empty($temptdatastr)) {
 
                         $userrolename = $DB->get_record_sql(" SELECT r.shortname FROM {role_assignments} as ra left join {role} as r on r.id = ra.roleid WHERE contextid IN (?) and userid = ? ",[$temptdatastr, $moodeluservalue->userid]);  
-
-                        $userrolename = $userrolename->shortname;
+                        $userrolename = $userrolename->shortname; 
 
                     } 
 
