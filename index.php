@@ -104,6 +104,10 @@ require_login();
 
 
 
+admin_externalpage_setup('toolleeloolxp_sync');
+
+
+
 $PAGE->set_context(context_system::instance());
 
 
