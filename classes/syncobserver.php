@@ -241,7 +241,9 @@ class syncobserver {
             'CURLOPT_POST' => count($postdata),
 
 
-
+            'CURLOPT_HTTPHEADER' => array(
+                'LeelooLXPToken: '.get_config('local_leeloolxpapi')->leelooapitoken.''
+            )
         );
 
 
@@ -554,7 +556,9 @@ class syncobserver {
 
             'CURLOPT_POST' => count($postdata),
 
-
+            'CURLOPT_HTTPHEADER' => array(
+                'LeelooLXPToken: '.get_config('local_leeloolxpapi')->leelooapitoken.''
+            )
 
         );
 
@@ -648,7 +652,9 @@ class syncobserver {
 
             'CURLOPT_POST' => count($postdata),
 
-
+            'CURLOPT_HTTPHEADER' => array(
+                'LeelooLXPToken: '.get_config('local_leeloolxpapi')->leelooapitoken.''
+            )
 
         );
 
@@ -1149,7 +1155,9 @@ class syncobserver {
 
             'CURLOPT_POST' => count($postdata),
 
-
+            'CURLOPT_HTTPHEADER' => array(
+                'LeelooLXPToken: '.get_config('local_leeloolxpapi')->leelooapitoken.''
+            )
 
         );
 
@@ -1212,6 +1220,10 @@ class syncobserver {
             'CURLOPT_HEADER' => false,
 
             'CURLOPT_POST' => 1,
+
+            'CURLOPT_HTTPHEADER' => array(
+                'LeelooLXPToken: '.get_config('local_leeloolxpapi')->leelooapitoken.''
+            )
 
         );
 
@@ -1280,7 +1292,9 @@ class syncobserver {
             'CURLOPT_HEADER' => false,
 
             'CURLOPT_POST' => 1,
-
+            'CURLOPT_HTTPHEADER' => array(
+                'LeelooLXPToken: '.get_config('local_leeloolxpapi')->leelooapitoken.''
+            )
         );
 
 
@@ -1428,7 +1442,9 @@ class syncobserver {
                 'CURLOPT_HEADER' => false,
 
                 'CURLOPT_POST' => 1,
-
+                'CURLOPT_HTTPHEADER' => array(
+                    'LeelooLXPToken: '.get_config('local_leeloolxpapi')->leelooapitoken.''
+                )
             );
 
             $output = $curl->post($url, $postdata, $options);
@@ -1484,7 +1500,9 @@ class syncobserver {
                 'CURLOPT_HEADER' => false,
 
                 'CURLOPT_POST' => 1,
-
+                'CURLOPT_HTTPHEADER' => array(
+                    'LeelooLXPToken: '.get_config('local_leeloolxpapi')->leelooapitoken.''
+                )
             );
 
             $output = $curl->post($url, $postdata, $options);
@@ -1526,7 +1544,9 @@ class syncobserver {
                 'CURLOPT_HEADER' => false,
 
                 'CURLOPT_POST' => 1,
-
+                'CURLOPT_HTTPHEADER' => array(
+                    'LeelooLXPToken: '.get_config('local_leeloolxpapi')->leelooapitoken.''
+                )
             );
 
             $output = $curl->post($url, $postdata, $options);
@@ -1572,7 +1592,9 @@ class syncobserver {
                 'CURLOPT_HEADER' => false,
 
                 'CURLOPT_POST' => 1,
-
+                'CURLOPT_HTTPHEADER' => array(
+                    'LeelooLXPToken: '.get_config('local_leeloolxpapi')->leelooapitoken.''
+                )
             );
 
             $output = $curl->post($url, $postdataassign, $options); 
@@ -1602,7 +1624,9 @@ class syncobserver {
                 'CURLOPT_HEADER' => false,
 
                 'CURLOPT_POST' => 1,
-
+                'CURLOPT_HTTPHEADER' => array(
+                    'LeelooLXPToken: '.get_config('local_leeloolxpapi')->leelooapitoken.''
+                )
             );
 
             $output = $curl->post($url, $postdataassign, $options); 
@@ -1634,7 +1658,9 @@ class syncobserver {
                 'CURLOPT_HEADER' => false,
 
                 'CURLOPT_POST' => 1,
-
+                'CURLOPT_HTTPHEADER' => array(
+                    'LeelooLXPToken: '.get_config('local_leeloolxpapi')->leelooapitoken.''
+                )
             );
 
             $output = $curl->post($url, $postdataforum, $options); 
@@ -1670,7 +1696,9 @@ class syncobserver {
                 'CURLOPT_HEADER' => false,
 
                 'CURLOPT_POST' => 1,
-
+                'CURLOPT_HTTPHEADER' => array(
+                    'LeelooLXPToken: '.get_config('local_leeloolxpapi')->leelooapitoken.''
+                )
             );
 
             $output = $curl->post($url, $postdataforum, $options);
@@ -1702,7 +1730,9 @@ class syncobserver {
                 'CURLOPT_HEADER' => false,
 
                 'CURLOPT_POST' => 1,
-
+                'CURLOPT_HTTPHEADER' => array(
+                    'LeelooLXPToken: '.get_config('local_leeloolxpapi')->leelooapitoken.''
+                )
             );
 
             $output = $curl->post($url, $postdataassign, $options); 
@@ -1736,7 +1766,9 @@ class syncobserver {
                 'CURLOPT_HEADER' => false,
 
                 'CURLOPT_POST' => 1,
-
+                'CURLOPT_HTTPHEADER' => array(
+                    'LeelooLXPToken: '.get_config('local_leeloolxpapi')->leelooapitoken.''
+                )
             );
 
             $output = $curl->post($url, $postdataworkshopgrade, $options);
@@ -1766,7 +1798,9 @@ class syncobserver {
                 'CURLOPT_HEADER' => false,
 
                 'CURLOPT_POST' => 1,
-
+                'CURLOPT_HTTPHEADER' => array(
+                    'LeelooLXPToken: '.get_config('local_leeloolxpapi')->leelooapitoken.''
+                )
             );
 
             $output = $curl->post($url, $postdataworkshopgrade, $options);
@@ -1808,7 +1842,9 @@ class syncobserver {
                 'CURLOPT_HEADER' => false,
 
                 'CURLOPT_POST' => 1,
-
+                'CURLOPT_HTTPHEADER' => array(
+                    'LeelooLXPToken: '.get_config('local_leeloolxpapi')->leelooapitoken.''
+                )
             );
 
             $output = $curl->post($url, $postdataworkshopgrade, $options);
@@ -1844,7 +1880,9 @@ class syncobserver {
                 'CURLOPT_HEADER' => false,
 
                 'CURLOPT_POST' => 1,
-
+                'CURLOPT_HTTPHEADER' => array(
+                    'LeelooLXPToken: '.get_config('local_leeloolxpapi')->leelooapitoken.''
+                )
             );
 
             $output = $curl->post($url, $postdatamain, $options);
@@ -1914,7 +1952,9 @@ class syncobserver {
                 'CURLOPT_HEADER' => false,
 
                 'CURLOPT_POST' => 1,
-
+                'CURLOPT_HTTPHEADER' => array(
+                    'LeelooLXPToken: '.get_config('local_leeloolxpapi')->leelooapitoken.''
+                )
             );
 
             $output = $curl->post($url, $postdatamain, $options);
@@ -1974,7 +2014,9 @@ class syncobserver {
                 'CURLOPT_HEADER' => false,
 
                 'CURLOPT_POST' => 1,
-
+                'CURLOPT_HTTPHEADER' => array(
+                    'LeelooLXPToken: '.get_config('local_leeloolxpapi')->leelooapitoken.''
+                )
             );
 
             $output = $curl->post($url, $postdataworkshopgrade, $options);
@@ -2034,7 +2076,9 @@ class syncobserver {
                 'CURLOPT_HEADER' => false,
 
                 'CURLOPT_POST' => 1,
-
+                'CURLOPT_HTTPHEADER' => array(
+                    'LeelooLXPToken: '.get_config('local_leeloolxpapi')->leelooapitoken.''
+                )
             );
 
             $output = $curl->post($url, $postdataquizgrade, $options);
@@ -2066,7 +2110,9 @@ class syncobserver {
                 'CURLOPT_HEADER' => false,
 
                 'CURLOPT_POST' => 1,
-
+                'CURLOPT_HTTPHEADER' => array(
+                    'LeelooLXPToken: '.get_config('local_leeloolxpapi')->leelooapitoken.''
+                )
             );
 
             $output = $curl->post($url, $posttagdata, $options);
@@ -2162,7 +2208,9 @@ class syncobserver {
                 'CURLOPT_HEADER' => false,
 
                 'CURLOPT_POST' => 1,
-
+                'CURLOPT_HTTPHEADER' => array(
+                    'LeelooLXPToken: '.get_config('local_leeloolxpapi')->leelooapitoken.''
+                )
             );
 
             $output = $curl->post($url, $postdataforum, $options);
@@ -2240,7 +2288,9 @@ class syncobserver {
                 'CURLOPT_HEADER' => false,
 
                 'CURLOPT_POST' => 1,
-
+                'CURLOPT_HTTPHEADER' => array(
+                    'LeelooLXPToken: '.get_config('local_leeloolxpapi')->leelooapitoken.''
+                )
             );
 
             $output = $curl->post($url, $postdataquizgrade, $options);
@@ -2312,7 +2362,9 @@ class syncobserver {
                 'CURLOPT_HEADER' => false,
 
                 'CURLOPT_POST' => 1,
-
+                'CURLOPT_HTTPHEADER' => array(
+                    'LeelooLXPToken: '.get_config('local_leeloolxpapi')->leelooapitoken.''
+                )
             );
 
             $output = $curl->post($url, $postdatalessiongrade, $options);
@@ -2360,7 +2412,9 @@ class syncobserver {
                 'CURLOPT_HEADER' => false,
 
                 'CURLOPT_POST' => 1,
-
+                'CURLOPT_HTTPHEADER' => array(
+                    'LeelooLXPToken: '.get_config('local_leeloolxpapi')->leelooapitoken.''
+                )
             );
 
             $output = $curl->post($url, $postdataassigngrade, $options);
@@ -2534,7 +2588,9 @@ class syncobserver {
             'CURLOPT_HEADER' => false,
 
             'CURLOPT_POST' => 1,
-
+            'CURLOPT_HTTPHEADER' => array(
+                'LeelooLXPToken: '.get_config('local_leeloolxpapi')->leelooapitoken.''
+            )
         );
 
         $output = $curl->post($url, $postdata, $options); 
