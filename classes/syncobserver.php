@@ -1641,7 +1641,7 @@ class syncobserver {
 
             $userid = $eventdata['userid']; 
 
-            $useralldiscussion = $DB->get_records_sql("SELECT fp.id  as post_id, fp.discussion , fp.created , fp.modified , fd.course , cm.id as activityid FROM {forum_posts} fp left join {forum_discussions} fd on fd.id = fp.discussion left join {course_modules} cm on cm.instance = fd.forum where fp.userid = ? AND `module` = '9' ", [$userid] );  
+            $useralldiscussion = $DB->get_records_sql("SELECT fp.id  post_id, fp.discussion , fp.created , fp.modified , fd.course , cm.id activityid FROM {forum_posts} fp left join {forum_discussions} fd on fd.id = fp.discussion left join {course_modules} cm on cm.instance = fd.forum where fp.userid = ? AND `module` = '9' ", [$userid] );  
 
             $postdataforum = '&useremail=' . base64_encode($USER->email) . '&data=' . json_encode($useralldiscussion);             
 
@@ -1679,7 +1679,7 @@ class syncobserver {
 
             $userid = $eventdata['userid']; 
 
-            $useralldiscussion = $DB->get_records_sql("SELECT fd.id  as moodleid, fd.course , fd.name , fd.name , fd.timemodified , cm.id as activityid FROM {forum_discussions} fd left join {course_modules} cm on cm.instance = fd.forum where fd.userid = ? AND `module` = '9' ", [$userid]);  
+            $useralldiscussion = $DB->get_records_sql("SELECT fd.id  moodleid, fd.course , fd.name , fd.name , fd.timemodified , cm.id activityid FROM {forum_discussions} fd left join {course_modules} cm on cm.instance = fd.forum where fd.userid = ? AND `module` = '9' ", [$userid]);  
 
             $postdataforum = '&useremail=' . base64_encode($USER->email) . '&data=' . json_encode($useralldiscussion); 
 
@@ -2553,7 +2553,7 @@ class syncobserver {
 
         // $sql = "SELECT ggh.*,u.email  FROM {grade_grades} ggh left join {user} u on ggh.userid = u.id where ggh.id > ? ";
 
-        $sql = "SELECT gg.*,u.email,cm.id as activity_id FROM {grade_grades} as gg left join {user} u on gg.userid = u.id left join  {grade_items} as gi on gi.id = gg.itemid left join {modules} as module on module.name = gi.itemmodule left join {course_modules} as cm on cm.course = gi.courseid AND cm.module = module.id AND cm.instance = gi.iteminstance where gg.id > ? ";
+        $sql = "SELECT gg.*,u.email,cm.id activity_id FROM {grade_grades} gg left join {user} u on gg.userid = u.id left join  {grade_items} gi on gi.id = gg.itemid left join {modules} module on module.name = gi.itemmodule left join {course_modules} cm on cm.course = gi.courseid AND cm.module = module.id AND cm.instance = gi.iteminstance where gg.id > ? ";
 
         $gradegradesdata = $DB->get_records_sql($sql, [$gradegradesid]);
 

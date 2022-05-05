@@ -952,7 +952,7 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
 
 
 
-        $sql = "SELECT cs.id as cid , cs.name as cname , cs.section as csection , cs.sequence as csequence, cfo.* FROM {course_sections} cs  left join {course_format_options} cfo ON ( cfo.sectionid = cs.id OR cfo.value = cs.section )   WHERE course = ? and courseid = ? and ( cfo.name LIKE 'parent' OR cfo.name LIKE 'hiddensections' OR cfo.name LIKE 'coursedisplay') AND cs.section != 0 GROUP BY cs.id ORDER BY cs.section ASC "; 
+        $sql = "SELECT cs.id cid , cs.name cname , cs.section csection , cs.sequence csequence, cfo.* FROM {course_sections} cs  left join {course_format_options} cfo ON ( cfo.sectionid = cs.id OR cfo.value = cs.section )   WHERE course = ? and courseid = ? and ( cfo.name LIKE 'parent' OR cfo.name LIKE 'hiddensections' OR cfo.name LIKE 'coursedisplay') AND cs.section != 0 GROUP BY cs.id ORDER BY cs.section ASC "; 
 
 
 
@@ -964,7 +964,7 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
 
             
 
-            $sql = "SELECT id as cid,name as cname,section as csection ,sequence as csequence,id as sectionid FROM {course_sections} cs  WHERE course = ? AND section != 0 AND section != '0'   ";
+            $sql = "SELECT id cid,name cname,section csection ,sequence csequence,id sectionid FROM {course_sections} cs  WHERE course = ? AND section != 0 AND section != '0'   ";
 
 
 
@@ -980,15 +980,15 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
 
         if ($i == '0') {
 
-            $enrolleduser = $DB->get_records_sql("SELECT u.*, ue.id, ue.timeend, ue.timestart, e.courseid, ue.userid, e.status AS enrol_status ,
+            $enrolleduser = $DB->get_records_sql("SELECT u.*, ue.id, ue.timeend, ue.timestart, e.courseid, ue.userid, e.status enrol_status ,
 
 
 
-            e.sortorder AS  enrol_sortorder , e.enrol
+            e.sortorder  enrol_sortorder , e.enrol
 
 
 
-            AS enrolmethod, (ue.timecreated)
+            enrolmethod, (ue.timecreated)
 
 
 
@@ -1016,7 +1016,7 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
 
 
 
-                $sql = "SELECT {role}.shortname as shortname, {role}.id as roleid
+                $sql = "SELECT {role}.shortname shortname, {role}.id roleid
 
 
 
@@ -1400,7 +1400,7 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
 
                     if (!empty($temptdatastr)) {
 
-                        $userrolename = $DB->get_record_sql(" SELECT r.shortname FROM {role_assignments} as ra left join {role} as r on r.id = ra.roleid WHERE contextid IN (?) and userid = ? ",[$temptdatastr, $moodeluservalue->userid]);  
+                        $userrolename = $DB->get_record_sql(" SELECT r.shortname FROM {role_assignments} ra left join {role} r on r.id = ra.roleid WHERE contextid IN (?) and userid = ? ",[$temptdatastr, $moodeluservalue->userid]);  
 
                         $userrolename = $userrolename->shortname;
 
@@ -1640,7 +1640,7 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
 
                     if (!empty($temptdatastr)) {
 
-                        $userrolename = $DB->get_record_sql(" SELECT r.shortname FROM {role_assignments} as ra left join {role} as r on r.id = ra.roleid WHERE contextid IN (?) and userid = ? ",[$temptdatastr, $moodeluservalue->userid]);   
+                        $userrolename = $DB->get_record_sql(" SELECT r.shortname FROM {role_assignments} ra left join {role} r on r.id = ra.roleid WHERE contextid IN (?) and userid = ? ",[$temptdatastr, $moodeluservalue->userid]);   
 
                         $userrolename = $userrolename->shortname;
 
@@ -3882,7 +3882,7 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
 
 
 
-        $sql = "SELECT cs.id as cid , cs.name as cname , cs.section as csection , cs.sequence as csequence, cfo.* FROM {course_sections} cs  left join {course_format_options} cfo ON ( cfo.sectionid = cs.id OR cfo.value = cs.section )   WHERE course = ? and courseid = ? and ( cfo.name LIKE 'parent' OR cfo.name LIKE 'hiddensections' OR cfo.name LIKE 'coursedisplay') AND cs.section != 0 GROUP BY cs.id ORDER BY cs.section ASC "; 
+        $sql = "SELECT cs.id cid , cs.name cname , cs.section csection , cs.sequence csequence, cfo.* FROM {course_sections} cs  left join {course_format_options} cfo ON ( cfo.sectionid = cs.id OR cfo.value = cs.section )   WHERE course = ? and courseid = ? and ( cfo.name LIKE 'parent' OR cfo.name LIKE 'hiddensections' OR cfo.name LIKE 'coursedisplay') AND cs.section != 0 GROUP BY cs.id ORDER BY cs.section ASC "; 
 
 
 
@@ -3894,7 +3894,7 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
 
             
 
-            $sql = "SELECT id as cid,name as cname,section as csection ,sequence as csequence,id as sectionid FROM {course_sections} cs  WHERE course = ? AND section != 0 AND section != '0'   ";
+            $sql = "SELECT id cid,name cname,section csection ,sequence csequence,id sectionid FROM {course_sections} cs  WHERE course = ? AND section != 0 AND section != '0'   ";
 
 
 
@@ -3906,15 +3906,15 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
 
         if ($i == '0') {
 
-            $enrolleduser = $DB->get_records_sql("SELECT u.*, ue.id, e.courseid, ue.userid, ue.timeend, ue.timestart, e.status AS enrol_status ,
+            $enrolleduser = $DB->get_records_sql("SELECT u.*, ue.id, e.courseid, ue.userid, ue.timeend, ue.timestart, e.status enrol_status ,
 
 
 
-            e.sortorder AS  enrol_sortorder , e.enrol
+            e.sortorder  enrol_sortorder , e.enrol
 
 
 
-            AS enrolmethod, (ue.timecreated)
+            enrolmethod, (ue.timecreated)
 
 
 
@@ -3942,7 +3942,7 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
 
 
 
-                $sql = "SELECT {role}.shortname as shortname, {role}.id as roleid
+                $sql = "SELECT {role}.shortname shortname, {role}.id roleid
 
 
 
@@ -4338,7 +4338,7 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
                     if (!empty($temptdatastr)) {
 
 
-                        $userrolename = $DB->get_record_sql(" SELECT r.shortname FROM {role_assignments} as ra left join {role} as r on r.id = ra.roleid WHERE contextid IN (?) and userid = ? ",[$temptdatastr, $moodeluservalue->userid]);  
+                        $userrolename = $DB->get_record_sql(" SELECT r.shortname FROM {role_assignments} ra left join {role} r on r.id = ra.roleid WHERE contextid IN (?) and userid = ? ",[$temptdatastr, $moodeluservalue->userid]);  
                         
                         
 
@@ -4581,7 +4581,7 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
 
                     if (!empty($temptdatastr)) {
 
-                        $userrolename = $DB->get_record_sql(" SELECT r.shortname FROM {role_assignments} as ra left join {role} as r on r.id = ra.roleid WHERE contextid IN (?) and userid = ? ",[$temptdatastr, $moodeluservalue->userid]);  
+                        $userrolename = $DB->get_record_sql(" SELECT r.shortname FROM {role_assignments} ra left join {role} r on r.id = ra.roleid WHERE contextid IN (?) and userid = ? ",[$temptdatastr, $moodeluservalue->userid]);  
                         $userrolename = $userrolename->shortname; 
 
                     } 
