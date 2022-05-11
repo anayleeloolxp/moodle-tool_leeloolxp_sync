@@ -2565,7 +2565,7 @@ class syncobserver {
 
 
 
-        $postdata = '&coursecompletedata=' . json_encode($coursecompletedata) . '&gradegradesdata=' . json_encode($gradegradesdata) . '&gradehistorydata=' . json_encode($gradehistorydata) . '&moodle_user_id=' . $userid . '&course_id=' . $courseid . '&activity_id=' .
+        $postdata = '&coursecompletedata=' . json_encode($coursecompletedata) . '&gradegradesdata=' . json_encode($gradegradesdata) . '&moodle_user_id=' . $userid . '&course_id=' . $courseid . '&activity_id=' .
 
 
 
