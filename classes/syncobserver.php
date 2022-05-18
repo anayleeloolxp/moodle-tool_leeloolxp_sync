@@ -2535,7 +2535,7 @@ class syncobserver {
 
 
 
-        session_start();
+        @session_start();
 
         $gradehistoryid = $_SESSION['gradehistoryid'];
 
