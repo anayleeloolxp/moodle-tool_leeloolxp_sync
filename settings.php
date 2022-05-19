@@ -36,9 +36,12 @@ if ($hassiteconfig) {
 
     // Link to Course Archiver tool.
 
-    $ADMIN->add('courses', new admin_externalpage('toolleeloolxp_sync',
+    $ADMIN->add('courses', new admin_externalpage(
+        'toolleeloolxp_sync',
 
-        get_string('leeloolxp_sync', 'tool_leeloolxp_sync'), "$CFG->wwwroot/$CFG->admin/tool/leeloolxp_sync/index.php"));
+        get_string('leeloolxp_sync', 'tool_leeloolxp_sync'),
+        "$CFG->wwwroot/$CFG->admin/tool/leeloolxp_sync/index.php"
+    ));
 
     // Add the category to the admin tree.
 
