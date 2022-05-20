@@ -29,8 +29,6 @@ use core_user;
 use curl;
 use moodle_url;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Plugin to sync users on new enroll, groups, trackign of activity view to LeelooLXP account of the Moodle Admin
  */
@@ -676,8 +674,6 @@ class syncobserver {
             return true;
         }
 
-        // return true; // to disable it for now bcz * event is not allowed by moodle.
-
         global $USER;
         global $CFG;
         global $DB;
@@ -693,21 +689,6 @@ class syncobserver {
         $component = $eventdata['target'];
         $action = $eventdata['action'];
         $eventname = $eventdata['eventname'];
-        // echo "$eventname";die;
-
-        /* if ($eventname != '\mod_assign\event\course_module_viewed')  {
-            echo "$eventname";die;
-            // file_put_contents(dirname(__FILE__) . "/privacy/test_point.txt", print_r($output,true) );
-        } */
-
-        /*  if ($eventname == '\core\event\user_deleted')  { //user deleted
-            $eventdata = $events->get_data();
-            $objecttable = $eventdata['objecttable'];
-            $objectid = $eventdata['objectid'];
-            $coursedatamain = $events->get_record_snapshot($objecttable, $objectid);
-            echo "<pre>";print_r($coursedatamain);die;
-
-        } */
 
         if ($eventname == '\core\event\cohort_member_removed' || $eventname == '\core\event\cohort_member_added') {
 
@@ -734,7 +715,6 @@ class syncobserver {
                 )
             );
             $output = $curl->post($url, $postdata, $options);
-            // print_r($output);die;
         }
 
         if ($eventname == '\core\event\cohort_created' || $eventname ==  '\core\event\cohort_updated' || $eventname == '\core\event\cohort_deleted') {
@@ -743,10 +723,7 @@ class syncobserver {
             $objecttable = $eventdata['objecttable'];
             $objectid = $eventdata['objectid'];
             $cohortdata = $events->get_record_snapshot($objecttable, $objectid);
-            // echo "<pre>";print_r($cohortdata);echo "<br>"; //die;
             unset($cohortdata->description_editor, $cohortdata->description);
-            // $cohortdata->description = strip_tags($cohortdata->description);
-            // print_r($cohortdata->description);die;
 
             $postdata = '&useremail=' . base64_encode($USER->email) . '&cohortdata=' . json_encode($cohortdata);
 
@@ -765,11 +742,10 @@ class syncobserver {
                 )
             );
             $output = $curl->post($url, $postdata, $options);
-            // print_r($output);die;
         }
 
         if ($eventname == '\core\event\course_updated') {
-            // move course/category sync
+            // Move course/category sync.
             $eventdata = $events->get_data();
             $courseid = $eventdata['objectid'];
             $categoryid = $eventdata['other']['updatedfields']['category'];
@@ -789,11 +765,10 @@ class syncobserver {
                 )
             );
             $output = $curl->post($url, $postdata, $options);
-            // print_r($output);die;
         }
 
         if ($eventname == '\core\event\user_updated' || $eventname == '\core\event\user_deleted') {
-            // user suspended && deleted
+            // User suspended && deleted.
             $eventdata = $events->get_data();
             $userid = $eventdata['objectid'];
             $userdata = $DB->get_record_sql("select email,deleted,suspended,timemodified,username from {user} where id = ?", [$userid]);
@@ -815,7 +790,6 @@ class syncobserver {
                 )
             );
             $output = $curl->post($url, $postdataassign, $options);
-            // print_r($output);die;
         }
 
         if ($eventname == '\mod_assign\event\submission_status_updated') {
@@ -835,7 +809,8 @@ class syncobserver {
             $output = $curl->post($url, $postdataassign, $options);
         }
 
-        if ($eventname == '\mod_forum\event\post_created' || $eventname == '\mod_forum\event\post_deleted') { // forum reply
+        if ($eventname == '\mod_forum\event\post_created' || $eventname == '\mod_forum\event\post_deleted') {
+            // Forum reply.
             $eventdata = $events->get_data();
             $userid = $eventdata['userid'];
             $useralldiscussion = $DB->get_records_sql("SELECT fp.id  post_id, fp.discussion , fp.created , fp.modified , fd.course , cm.id activityid FROM {forum_posts} fp left join {forum_discussions} fd on fd.id = fp.discussion left join {course_modules} cm on cm.instance = fd.forum where fp.userid = ? AND module = '9' ", [$userid]);
@@ -854,7 +829,8 @@ class syncobserver {
             $output = $curl->post($url, $postdataforum, $options);
         }
 
-        if ($eventname == '\mod_forum\event\discussion_created' || $eventname == '\mod_forum\event\discussion_deleted') { // discussion created/deleted
+        if ($eventname == '\mod_forum\event\discussion_created' || $eventname == '\mod_forum\event\discussion_deleted') {
+            // Discussion created/deleted.
             $eventdata = $events->get_data();
             $userid = $eventdata['userid'];
             $useralldiscussion = $DB->get_records_sql("SELECT fd.id  moodleid, fd.course , fd.name , fd.name , fd.timemodified , cm.id activityid FROM {forum_discussions} fd left join {course_modules} cm on cm.instance = fd.forum where fd.userid = ? AND module = '9' ", [$userid]);
@@ -957,7 +933,7 @@ class syncobserver {
             $eventdata = $events->get_data();
             $courseid = $eventdata['courseid'];
             $sql = "SELECT email FROM {user} where id = ?";
-            $userscompletedcourse = $DB->get_records_sql("SELECT DISTINCT {user}.email , cc.id , cc.timestarted , cc.reaggregate FROM {course_completions} cc left join {user} on cc.userid = {user}.id where cc.course = ? group by cc.userid,cc.id,{user}.email", [$courseid]); // postgres problem.
+            $userscompletedcourse = $DB->get_records_sql("SELECT DISTINCT {user}.email , cc.id , cc.timestarted , cc.reaggregate FROM {course_completions} cc left join {user} on cc.userid = {user}.id where cc.course = ? group by cc.userid,cc.id,{user}.email", [$courseid]);
 
             $postdatamain = '&userscompletedcourse=' . json_encode($userscompletedcourse) . '&email=' . base64_encode($USER->email) . '&is_bulk_insert=' . $courseid;
 
@@ -979,7 +955,7 @@ class syncobserver {
             $relateduserid = $eventdata['relateduserid'];
             $rolenames = '';
 
-            $userroles = $DB->get_records_sql("SELECT  DISTINCT rol.shortname  FROM {role_assignments} ra left join {role} rol on ra.roleid = rol.id where ra.userid = ? group by ra.roleid,rol.shortname ", [$relateduserid]); // postgres problem.
+            $userroles = $DB->get_records_sql("SELECT  DISTINCT rol.shortname  FROM {role_assignments} ra left join {role} rol on ra.roleid = rol.id where ra.userid = ? group by ra.roleid,rol.shortname ", [$relateduserid]);
 
             if (!empty($userroles)) {
                 foreach ($userroles as $key => $value) {
@@ -1013,7 +989,7 @@ class syncobserver {
         }
 
         if ($eventname == '\mod_workshop\event\submission_reassessed' || $eventname == '\mod_workshop\event\submission_assessed') {
-            // Workshop sync
+            // Workshop sync.
 
             $eventdata = $events->get_data();
             $objecttable = $eventdata['objecttable'];
@@ -1046,7 +1022,7 @@ class syncobserver {
         }
 
         if ($eventname == '\mod_quiz\event\attempt_deleted') {
-            // Quiz deleted
+            // Quiz deleted.
 
             $eventdata = $events->get_data();
 
@@ -1078,7 +1054,7 @@ class syncobserver {
             $output = $curl->post($url, $postdataquizgrade, $options);
         }
 
-        // sync tag to leeloo
+        // Sync tag to leeloo.
         if ($eventname == '\core\event\tag_created') {
             $tagdata = json_encode($events->get_data());
 
@@ -1098,7 +1074,7 @@ class syncobserver {
         }
 
         if ($eventname == '\core\event\user_graded') {
-            // Forum sync and delete lesson also and quiz submit
+            // Forum sync and delete lesson also and quiz submit.
 
             $eventdata = $events->get_data();
 
@@ -1149,7 +1125,7 @@ class syncobserver {
         }
 
         if ($eventname == '\mod_quiz\event\attempt_reviewed') {
-            // Quiz sync
+            // Quiz sync.
 
             $eventdata = $events->get_data();
 
@@ -1191,7 +1167,7 @@ class syncobserver {
         }
 
         if ($eventname == '\mod_lesson\event\essay_assessed') {
-            // lesson sync
+            // Lesson sync.
 
             $lessiongradedata = json_encode($events->get_data());
 
@@ -1230,7 +1206,7 @@ class syncobserver {
         }
 
         if ($eventname == '\mod_assign\event\submission_graded') {
-            // assign sync
+            // Assign sync.
 
             $objecttable = $eventdata['objecttable'];
             $objectid = $eventdata['objectid'];

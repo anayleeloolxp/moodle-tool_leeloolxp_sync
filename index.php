@@ -478,13 +478,13 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
 
         $quizdiffsync = $activityidarr[12];
 
-        if($CFG->dbtype == 'mysqli'){
+        if ($CFG->dbtype == 'mysqli') {
             $dtype = 'UNSIGNED';
         } else {
             $dtype = 'INT';
         }
 
-        $sql = "SELECT cs.id cid , cs.name cname , cs.section csection , cs.sequence csequence, cfo.* FROM {course_sections} cs  left join {course_format_options} cfo ON ( cfo.sectionid = cs.id OR CAST(cfo.value as $dtype) = cs.section )   WHERE course = ? and courseid = ? and ( cfo.name LIKE 'parent' OR cfo.name LIKE 'hiddensections' OR cfo.name LIKE 'coursedisplay') AND cs.section != 0 GROUP BY cs.id,cfo.id ORDER BY cs.section ASC ";  // postgres problem.
+        $sql = "SELECT cs.id cid , cs.name cname , cs.section csection , cs.sequence csequence, cfo.* FROM {course_sections} cs  left join {course_format_options} cfo ON ( cfo.sectionid = cs.id OR CAST(cfo.value as $dtype) = cs.section )   WHERE course = ? and courseid = ? and ( cfo.name LIKE 'parent' OR cfo.name LIKE 'hiddensections' OR cfo.name LIKE 'coursedisplay') AND cs.section != 0 GROUP BY cs.id,cfo.id ORDER BY cs.section ASC";
 
         $coursehierarchy = $DB->get_records_sql($sql, [$courseidagain, $courseidagain]);
 
@@ -1869,7 +1869,7 @@ if (isset($reqresync)) {
 if (isset($requnsyncid) && !empty($requnsyncid)) {
     $activityidmoodlearr = $requnsyncid;
 
-    $post = ['activityid' => $activityidmoodlearr]; // added by abdul
+    $post = ['activityid' => $activityidmoodlearr]; // Added by abdul.
 
     $curl = new curl;
 
@@ -1919,8 +1919,6 @@ if (isset($reqid) && !empty($reqid)) {
         )
     );
 
-    // print_r($curl->post($url, $post, $options));die;
-
     if (!$response = $curl->post($url, $post, $options)) {
         return true;
     }
@@ -1947,13 +1945,10 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
 
     $useridscohort = '';
 
-    // $groupdata = '';
-
     foreach ($alldata as $key => $value) {
         $activityidmoodlearr = array();
 
         $activityset = str_replace("'", '', $value);
-        // echo "<pre>";print_r($activityset);die;
 
         $activityidarr = explode('$$', $activityset);
 
@@ -1971,13 +1966,13 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
 
         $quizdiffsync = $activityidarr[12];
 
-        if($CFG->dbtype == 'mysqli'){
+        if ($CFG->dbtype == 'mysqli') {
             $dtype = 'UNSIGNED';
         } else {
             $dtype = 'INT';
         }
 
-        $sql = "SELECT cs.id cid , cs.name cname , cs.section csection , cs.sequence csequence, cfo.* FROM {course_sections} cs  left join {course_format_options} cfo ON ( cfo.sectionid = cs.id OR CAST(cfo.value as $dtype) = cs.section )   WHERE course = ? and courseid = ? and ( cfo.name LIKE 'parent' OR cfo.name LIKE 'hiddensections' OR cfo.name LIKE 'coursedisplay') AND cs.section != 0 GROUP BY cs.id,cfo.id ORDER BY cs.section ASC "; // postgres problem. 
+        $sql = "SELECT cs.id cid , cs.name cname , cs.section csection , cs.sequence csequence, cfo.* FROM {course_sections} cs  left join {course_format_options} cfo ON ( cfo.sectionid = cs.id OR CAST(cfo.value as $dtype) = cs.section )   WHERE course = ? and courseid = ? and ( cfo.name LIKE 'parent' OR cfo.name LIKE 'hiddensections' OR cfo.name LIKE 'coursedisplay') AND cs.section != 0 GROUP BY cs.id,cfo.id ORDER BY cs.section ASC ";
 
         $coursehierarchy = $DB->get_records_sql($sql, [$courseidagain, $courseidagain]);
 
@@ -2476,7 +2471,7 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
         $gradeitems = $DB->get_records_sql("SELECT * FROM {grade_items} WHERE courseid = ?", [$courseidagain]);
 
         $tempdata = explode('$$', $activityset);
-        // echo "<pre>";print_r($tempdata);die;
+
         $tagdata = [];
 
         if (!empty($tempdata[3])) {
@@ -2512,8 +2507,6 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
             'is_quiz_task' => 0,
 
             'group_name' => $groupname,
-
-            // 'group_data' => json_encode($groupdata),
 
             'project_description' => $coursedetailsagain->summary,
 
@@ -2584,8 +2577,7 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
                 'LeelooLXPToken: ' . get_config('local_leeloolxpapi')->leelooapitoken . ''
             )
         );
-        // echo "<pre>"; print_r($moodleuserstudentarrayy);die;
-        // print_r($curl->post($url, $post, $options));die;
+
         if (!$response = $curl->post($url, $post, $options)) {
             return true;
         }
