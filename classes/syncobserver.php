@@ -957,7 +957,7 @@ class syncobserver {
             $eventdata = $events->get_data();
             $courseid = $eventdata['courseid'];
             $sql = "SELECT email FROM {user} where id = ?";
-            $userscompletedcourse = $DB->get_records_sql("SELECT DISTINCT user.email , cc.id , cc.timestarted , cc.reaggregate FROM {course_completions} cc left join {user} user on cc.userid = user.id where cc.course = ? group by cc.userid ", [$courseid]); // postgres problem.
+            $userscompletedcourse = $DB->get_records_sql("SELECT DISTINCT {user}.email , cc.id , cc.timestarted , cc.reaggregate FROM {course_completions} cc left join {user} on cc.userid = {user}.id where cc.course = ? group by cc.userid,cc.id,{user}.email", [$courseid]); // postgres problem.
 
             $postdatamain = '&userscompletedcourse=' . json_encode($userscompletedcourse) . '&email=' . base64_encode($USER->email) . '&is_bulk_insert=' . $courseid;
 
@@ -979,7 +979,7 @@ class syncobserver {
             $relateduserid = $eventdata['relateduserid'];
             $rolenames = '';
 
-            $userroles = $DB->get_records_sql("SELECT  DISTINCT rol.shortname  FROM {role_assignments} ra left join {role} rol on ra.roleid = rol.id where ra.userid = ? group by ra.roleid ", [$relateduserid]); // postgres problem.
+            $userroles = $DB->get_records_sql("SELECT  DISTINCT rol.shortname  FROM {role_assignments} ra left join {role} rol on ra.roleid = rol.id where ra.userid = ? group by ra.roleid,rol.shortname ", [$relateduserid]); // postgres problem.
 
             if (!empty($userroles)) {
                 foreach ($userroles as $key => $value) {

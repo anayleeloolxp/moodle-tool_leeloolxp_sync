@@ -478,7 +478,13 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
 
         $quizdiffsync = $activityidarr[12];
 
-        $sql = "SELECT cs.id cid , cs.name cname , cs.section csection , cs.sequence csequence, cfo.* FROM {course_sections} cs  left join {course_format_options} cfo ON ( cfo.sectionid = cs.id OR cfo.value = cs.section )   WHERE course = ? and courseid = ? and ( cfo.name LIKE 'parent' OR cfo.name LIKE 'hiddensections' OR cfo.name LIKE 'coursedisplay') AND cs.section != 0 GROUP BY cs.id ORDER BY cs.section ASC ";  // postgres problem.
+        if($CFG->dbtype == 'mysqli'){
+            $dtype = 'UNSIGNED';
+        } else {
+            $dtype = 'INT';
+        }
+
+        $sql = "SELECT cs.id cid , cs.name cname , cs.section csection , cs.sequence csequence, cfo.* FROM {course_sections} cs  left join {course_format_options} cfo ON ( cfo.sectionid = cs.id OR CAST(cfo.value as $dtype) = cs.section )   WHERE course = ? and courseid = ? and ( cfo.name LIKE 'parent' OR cfo.name LIKE 'hiddensections' OR cfo.name LIKE 'coursedisplay') AND cs.section != 0 GROUP BY cs.id,cfo.id ORDER BY cs.section ASC ";  // postgres problem.
 
         $coursehierarchy = $DB->get_records_sql($sql, [$courseidagain, $courseidagain]);
 
@@ -1965,7 +1971,13 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
 
         $quizdiffsync = $activityidarr[12];
 
-        $sql = "SELECT cs.id cid , cs.name cname , cs.section csection , cs.sequence csequence, cfo.* FROM {course_sections} cs  left join {course_format_options} cfo ON ( cfo.sectionid = cs.id OR cfo.value = cs.section )   WHERE course = ? and courseid = ? and ( cfo.name LIKE 'parent' OR cfo.name LIKE 'hiddensections' OR cfo.name LIKE 'coursedisplay') AND cs.section != 0 GROUP BY cs.id ORDER BY cs.section ASC "; // postgres problem.
+        if($CFG->dbtype == 'mysqli'){
+            $dtype = 'UNSIGNED';
+        } else {
+            $dtype = 'INT';
+        }
+
+        $sql = "SELECT cs.id cid , cs.name cname , cs.section csection , cs.sequence csequence, cfo.* FROM {course_sections} cs  left join {course_format_options} cfo ON ( cfo.sectionid = cs.id OR CAST(cfo.value as $dtype) = cs.section )   WHERE course = ? and courseid = ? and ( cfo.name LIKE 'parent' OR cfo.name LIKE 'hiddensections' OR cfo.name LIKE 'coursedisplay') AND cs.section != 0 GROUP BY cs.id,cfo.id ORDER BY cs.section ASC "; // postgres problem. 
 
         $coursehierarchy = $DB->get_records_sql($sql, [$courseidagain, $courseidagain]);
 
