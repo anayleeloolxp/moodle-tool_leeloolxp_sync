@@ -168,7 +168,10 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
             if ($sectionsdetails->name != '' && $sectionsdetails->sequence != '') {
                 $sequence = $sectionsdetails->sequence;
 
-                $modulescourse = $DB->get_records_sql("select * from {course_modules} where section = ? ORDER BY ID", [$sectionsdetails->id]);
+                $modulescourse = $DB->get_records_sql("select *
+                from {course_modules}
+                where section = ?
+                ORDER BY ID", [$sectionsdetails->id]);
 
                 if (!empty($modulescourse)) {
                     foreach ($modulescourse as $coursemoduledetails) {
@@ -418,11 +421,14 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
 
                                             $sectionsdetails->summary . "$$" .
 
-                                            strip_tags($valuefinal->intro . "$$" .
+                                            strip_tags(
+                                                $valuefinal->intro . "$$" .
 
-                                                $activitystartdates . "$$" .
+                                                    $activitystartdates . "$$" .
 
-                                                $activityenddatess . "$$" . $tbl . "$$" . $iconurl . "$$" . $quiztype . "$$" . $difficulty);
+                                                    $activityenddatess . "$$" . $tbl . "$$" . $iconurl . "$$" .
+                                                    $quiztype . "$$" . $difficulty
+                                            );
 
                                         $alldata[] = $querystring;
 
@@ -482,13 +488,20 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
             $dtype = 'INT';
         }
 
-        $sql = "SELECT cs.id cid , cs.name cname , cs.section csection , cs.sequence csequence, cfo.* FROM {course_sections} cs  left join {course_format_options} cfo ON ( cfo.sectionid = cs.id OR CAST(cfo.value as $dtype) = cs.section )   WHERE course = ? and courseid = ? and ( cfo.name LIKE 'parent' OR cfo.name LIKE 'hiddensections' OR cfo.name LIKE 'coursedisplay') AND cs.section != 0 GROUP BY cs.id,cfo.id ORDER BY cs.section ASC";
+        $sql = "SELECT cs.id cid , cs.name cname , cs.section csection , cs.sequence csequence, cfo.*
+        FROM {course_sections} cs
+        left join {course_format_options} cfo ON ( cfo.sectionid = cs.id OR CAST(cfo.value as $dtype) = cs.section )
+        WHERE course = ? and courseid = ?
+        and ( cfo.name LIKE 'parent' OR cfo.name LIKE 'hiddensections' OR cfo.name LIKE 'coursedisplay')
+        AND cs.section != 0 GROUP BY cs.id,cfo.id ORDER BY cs.section ASC";
 
         $coursehierarchy = $DB->get_records_sql($sql, [$courseidagain, $courseidagain]);
 
         if (empty($coursehierarchy)) {
 
-            $sql = "SELECT id cid,name cname,section csection ,sequence csequence,id sectionid FROM {course_sections} cs  WHERE course = ? AND section != 0 AND section != '0'";
+            $sql = "SELECT id cid,name cname,section csection ,sequence csequence,id sectionid
+            FROM {course_sections} cs
+            WHERE course = ? AND section != 0 AND section != '0'";
 
             $coursehierarchy = $DB->get_records_sql($sql, [$courseidagain]);
         }
@@ -496,18 +509,14 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
         $groupdata = $DB->get_records_sql("SELECT * FROM {groups} groups where groups.courseid = ?", [$courseidagain]);
 
         if ($i == '0') {
-            $enrolleduser = $DB->get_records_sql("SELECT u.*, ue.id, ue.timeend, ue.timestart, e.courseid, ue.userid, e.status enrol_status ,
-
+            $enrolleduser = $DB->get_records_sql("SELECT u.*, ue.id, ue.timeend, ue.timestart, e.courseid,
+            ue.userid, e.status enrol_status ,
             e.sortorder  enrol_sortorder , e.enrol
-
             enrolmethod, (ue.timecreated)
-
-            FROM {user_enrolments} ue JOIN {enrol} e ON e.id = ue.enrolid
-
+            FROM {user_enrolments} ue
+            JOIN {enrol} e ON e.id = ue.enrolid
             AND e.status = '0' JOIN {user} u ON u.id = ue.userid
-
             AND u.deleted = '0'
-
             Where e.courseid = ?", [$courseidagain]);
 
             foreach ($enrolleduser as $key => $moodeluservalue) {
@@ -685,7 +694,10 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
                     }
                 }
 
-                $academicprogramfield = $DB->get_record_sql("SELECT DISTINCT data FROM {user_info_field} field left join {user_info_data} on {user_info_data}.fieldid = field.id where field.name LIKE '%Academic program%' and {user_info_data}.userid= ?", [$enrolleduserid]);
+                $academicprogramfield = $DB->get_record_sql("SELECT DISTINCT data FROM {user_info_field} field
+                left join {user_info_data} on {user_info_data}.fieldid = field.id
+                where field.name LIKE '%Academic program%'
+                and {user_info_data}.userid= ?", [$enrolleduserid]);
 
                 if (isset($academicprogramfield->data) && $academicprogramfield->data != '') {
                     $academicprogram = $academicprogramfield->data;
@@ -699,7 +711,11 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
 
                 if ($usertype == 'student') {
 
-                    $tempdatacon = $DB->get_record_sql(" SELECT id FROM {context} WHERE instanceid = ? AND depth = '3' ORDER BY id DESC ", [$courseidagain]);
+                    $tempdatacon = $DB->get_record_sql(" SELECT id
+                    FROM {context}
+                    WHERE instanceid = ?
+                    AND depth = '3'
+                    ORDER BY id DESC ", [$courseidagain]);
                     if (!empty($tempdatacon)) {
                         $temptdatastr = $tempdatacon->id;
                     } else {
@@ -708,7 +724,10 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
                     $userrolename = 'student';
 
                     if (!empty($temptdatastr)) {
-                        $userrolename = $DB->get_record_sql(" SELECT r.shortname FROM {role_assignments} ra left join {role} r on r.id = ra.roleid WHERE contextid IN (?) and userid = ? ", [$temptdatastr, $moodeluservalue->userid]);
+                        $userrolename = $DB->get_record_sql(" SELECT r.shortname FROM {role_assignments} ra
+                        left join {role} r on r.id = ra.roleid
+                        WHERE contextid IN (?)
+                        and userid = ? ", [$temptdatastr, $moodeluservalue->userid]);
                         $userrolename = $userrolename->shortname;
                     }
 
@@ -818,7 +837,10 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
                     );
                 } else {
 
-                    $tempdatacon = $DB->get_record_sql(" SELECT id FROM {context} WHERE instanceid = ? AND depth = '3' ORDER BY id DESC ", [$courseidagain]);
+                    $tempdatacon = $DB->get_record_sql(" SELECT id
+                    FROM {context}
+                    WHERE instanceid = ? AND depth = '3'
+                    ORDER BY id DESC ", [$courseidagain]);
                     if (!empty($tempdatacon)) {
                         $temptdatastr = $tempdatacon->id;
                     } else {
@@ -828,7 +850,11 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
                     $userrolename = 'student';
 
                     if (!empty($temptdatastr)) {
-                        $userrolename = $DB->get_record_sql(" SELECT r.shortname FROM {role_assignments} ra left join {role} r on r.id = ra.roleid WHERE contextid IN (?) and userid = ? ", [$temptdatastr, $moodeluservalue->userid]);
+                        $userrolename = $DB->get_record_sql(" SELECT r.shortname
+                        FROM {role_assignments} ra
+                        left join {role} r on r.id = ra.roleid
+                        WHERE contextid IN (?)
+                        and userid = ? ", [$temptdatastr, $moodeluservalue->userid]);
                         $userrolename = $userrolename->shortname;
                     }
 
@@ -953,7 +979,10 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
 
         if (!empty($useridscohort)) {
 
-            $cohortdata = $DB->get_records_sql(" SELECT {cohort}.name FROM {cohort_members} left join {cohort} on {cohort}.id={cohort_members}.cohortid WHERE userid IN (?) ", [$useridscohort]);
+            $cohortdata = $DB->get_records_sql(" SELECT {cohort}.name
+            FROM {cohort_members}
+            left join {cohort} on {cohort}.id={cohort_members}.cohortid
+            WHERE userid IN ($useridscohort) ");
 
             $cohortname = '';
 
@@ -969,7 +998,10 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
 
         $categorydata = $DB->get_records_sql("SELECT * FROM {course_categories} WHERE id = ?", [$coursedetailsagain->category]);
 
-        $gradecategories = $DB->get_records_sql("SELECT * FROM {grade_categories} WHERE courseid = ? ORDER BY depth ASC ", [$courseidagain]);
+        $gradecategories = $DB->get_records_sql("SELECT *
+        FROM {grade_categories}
+        WHERE courseid = ?
+        ORDER BY depth ASC ", [$courseidagain]);
         $gradeitems = $DB->get_records_sql("SELECT * FROM {grade_items} WHERE courseid = ?", [$courseidagain]);
 
         $tempdata = explode('$$', $activityset);
@@ -980,12 +1012,13 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
             $itemidd = $tempdata[3];
 
             $tagdata = $DB->get_records_sql(
-                "SELECT {tag}.* ,{user}.email ,{tag_instance}.contextid ,{tag_instance}.itemtype ,{tag_instance}.ordering ,{tag_instance}.tiuserid ,{tag_instance}.itemid
+                "SELECT {tag}.* ,{user}.email ,{tag_instance}.contextid ,
+            {tag_instance}.itemtype ,{tag_instance}.ordering ,
+            {tag_instance}.tiuserid ,{tag_instance}.itemid
             FROM {tag_instance}
-
-                join {tag} on {tag_instance}.tagid = {tag}.id join {user} ON {user}.id = {tag}.userid
-
-                where {tag_instance}.itemid = ?",
+            join {tag} on {tag_instance}.tagid = {tag}.id
+            join {user} ON {user}.id = {tag}.userid
+            where {tag_instance}.itemid = ?",
                 [$itemidd]
             );
         }
@@ -1970,30 +2003,33 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
             $dtype = 'INT';
         }
 
-        $sql = "SELECT cs.id cid , cs.name cname , cs.section csection , cs.sequence csequence, cfo.* FROM {course_sections} cs  left join {course_format_options} cfo ON ( cfo.sectionid = cs.id OR CAST(cfo.value as $dtype) = cs.section )   WHERE course = ? and courseid = ? and ( cfo.name LIKE 'parent' OR cfo.name LIKE 'hiddensections' OR cfo.name LIKE 'coursedisplay') AND cs.section != 0 GROUP BY cs.id,cfo.id ORDER BY cs.section ASC ";
+        $sql = "SELECT cs.id cid , cs.name cname , cs.section csection , cs.sequence csequence, cfo.*
+        FROM {course_sections} cs
+        left join {course_format_options} cfo ON ( cfo.sectionid = cs.id OR CAST(cfo.value as $dtype) = cs.section )
+        WHERE course = ? and courseid = ?
+        and ( cfo.name LIKE 'parent' OR cfo.name LIKE 'hiddensections' OR cfo.name LIKE 'coursedisplay')
+        AND cs.section != 0
+        GROUP BY cs.id,cfo.id ORDER BY cs.section ASC ";
 
         $coursehierarchy = $DB->get_records_sql($sql, [$courseidagain, $courseidagain]);
 
         if (empty($coursehierarchy)) {
 
-            $sql = "SELECT id cid,name cname,section csection ,sequence csequence,id sectionid FROM {course_sections} cs  WHERE course = ? AND section != 0 AND section != '0'   ";
+            $sql = "SELECT id cid,name cname,section csection ,sequence csequence,id sectionid
+            FROM {course_sections} cs
+            WHERE course = ? AND section != 0 AND section != '0'   ";
 
             $coursehierarchy = $DB->get_records_sql($sql, [$courseidagain]);
         }
 
         if ($i == '0') {
-            $enrolleduser = $DB->get_records_sql("SELECT u.*, ue.id, e.courseid, ue.userid, ue.timeend, ue.timestart, e.status enrol_status ,
-
+            $enrolleduser = $DB->get_records_sql("SELECT u.*, ue.id, e.courseid, ue.userid, ue.timeend,
+            ue.timestart, e.status enrol_status ,
             e.sortorder  enrol_sortorder , e.enrol
-
             enrolmethod, (ue.timecreated)
-
             FROM {user_enrolments} ue JOIN {enrol} e ON e.id = ue.enrolid
-
             AND e.status = 0 JOIN {user} u ON u.id = ue.userid
-
             AND u.deleted = 0
-
             Where e.courseid = ?", [$courseidagain]);
 
             foreach ($enrolleduser as $key => $moodeluservalue) {
@@ -2175,7 +2211,11 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
                     }
                 }
 
-                $academicprogramfield = $DB->get_record_sql("SELECT DISTINCT data FROM {user_info_field} field left join {user_info_data} on {user_info_data}.fieldid = field.id where field.name LIKE '%Academic program%' and {user_info_data}.userid= ?", [$enrolleduserid]);
+                $academicprogramfield = $DB->get_record_sql("SELECT DISTINCT data
+                FROM {user_info_field} field
+                left join {user_info_data} on {user_info_data}.fieldid = field.id
+                where field.name LIKE '%Academic program%'
+                and {user_info_data}.userid= ?", [$enrolleduserid]);
 
                 if (isset($academicprogramfield->data) && $academicprogramfield->data != '') {
                     $academicprogram = $academicprogramfield->data;
@@ -2189,7 +2229,9 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
 
                 if ($usertype == 'student') {
 
-                    $tempdatacon = $DB->get_record_sql(" SELECT id FROM {context} WHERE instanceid = ? AND depth = '3'  ORDER BY id DESC", [$courseidagain]);
+                    $tempdatacon = $DB->get_record_sql(" SELECT id FROM {context}
+                    WHERE instanceid = ? AND depth = '3'
+                    ORDER BY id DESC", [$courseidagain]);
 
                     if (!empty($tempdatacon)) {
                         $temptdatastr = $tempdatacon->id;
@@ -2201,7 +2243,11 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
 
                     if (!empty($temptdatastr)) {
 
-                        $userrolename = $DB->get_record_sql(" SELECT r.shortname FROM {role_assignments} ra left join {role} r on r.id = ra.roleid WHERE contextid IN (?) and userid = ? ", [$temptdatastr, $moodeluservalue->userid]);
+                        $userrolename = $DB->get_record_sql(" SELECT r.shortname
+                        FROM {role_assignments} ra
+                        left join {role} r on r.id = ra.roleid
+                        WHERE contextid IN (?)
+                        and userid = ? ", [$temptdatastr, $moodeluservalue->userid]);
 
 
                         $userrolename = $userrolename->shortname;
@@ -2314,7 +2360,9 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
                     );
                 } else {
 
-                    $tempdatacon = $DB->get_record_sql(" SELECT id FROM {context} WHERE instanceid = ? AND depth = '3' ORDER BY id DESC", [$courseidagain]);
+                    $tempdatacon = $DB->get_record_sql(" SELECT id FROM {context}
+                    WHERE instanceid = ? AND depth = '3'
+                    ORDER BY id DESC", [$courseidagain]);
 
                     if (!empty($tempdatacon)) {
                         $temptdatastr = $tempdatacon->id;
@@ -2325,7 +2373,11 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
                     $userrolename = 'student';
 
                     if (!empty($temptdatastr)) {
-                        $userrolename = $DB->get_record_sql(" SELECT r.shortname FROM {role_assignments} ra left join {role} r on r.id = ra.roleid WHERE contextid IN (?) and userid = ? ", [$temptdatastr, $moodeluservalue->userid]);
+                        $userrolename = $DB->get_record_sql(" SELECT r.shortname
+                        FROM {role_assignments} ra
+                        left join {role} r on r.id = ra.roleid
+                        WHERE contextid IN (?)
+                        and userid = ? ", [$temptdatastr, $moodeluservalue->userid]);
                         $userrolename = $userrolename->shortname;
                     }
 
@@ -2450,7 +2502,10 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
 
         if (!empty($useridscohort)) {
 
-            $cohortdata = $DB->get_records_sql(" SELECT {cohort}.name FROM {cohort_members} left join {cohort} on {cohort}.id={cohort_members}.cohortid WHERE userid IN (?) ", [$useridscohort]);
+            $cohortdata = $DB->get_records_sql(" SELECT {cohort}.name
+            FROM {cohort_members}
+            left join {cohort} on {cohort}.id={cohort_members}.cohortid
+            WHERE userid IN ($useridscohort) ");
 
             $cohortname = '';
 
@@ -2465,7 +2520,9 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
         $groupname = '';
         $categorydata = $DB->get_records_sql("SELECT * FROM {course_categories} WHERE id = ?", [$coursedetailsagain->category]);
 
-        $gradecategories = $DB->get_records_sql("SELECT * FROM {grade_categories} WHERE courseid = ? ORDER BY depth ASC", [$courseidagain]);
+        $gradecategories = $DB->get_records_sql("SELECT * FROM {grade_categories}
+        WHERE courseid = ?
+        ORDER BY depth ASC", [$courseidagain]);
         $gradeitems = $DB->get_records_sql("SELECT * FROM {grade_items} WHERE courseid = ?", [$courseidagain]);
 
         $tempdata = explode('$$', $activityset);
@@ -2476,12 +2533,13 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
             $itemidd = $tempdata[3];
 
             $tagdata = $DB->get_records_sql(
-                "SELECT {tag}.* ,{user}.email, {tag_instance}.contextid, {tag_instance}.itemtype, {tag_instance}.ordering, {tag_instance}.tiuserid, {tag_instance}.itemid
+                "SELECT {tag}.* ,{user}.email, {tag_instance}.contextid,
+
+            {tag_instance}.itemtype, {tag_instance}.ordering, {tag_instance}.tiuserid,
+            {tag_instance}.itemid
             FROM {tag_instance}
-
-                join {tag} on {tag_instance}.tagid = {tag}.id join {user} ON {user}.id = {tag}.userid
-
-                where {tag_instance}.itemid = ?",
+            join {tag} on {tag_instance}.tagid = {tag}.id join {user} ON {user}.id = {tag}.userid
+            where {tag_instance}.itemid = ?",
                 [$itemidd]
             );
         }
@@ -2766,13 +2824,15 @@ if (!isset($reqaction)) {
                     echo '<ul>';
 
                     if ($alreadysync) {
-                        echo '<li><a href="' . parse_url(
+                        echo '<li>
+                        <a href="' . parse_url(
                             $_SERVER["REQUEST_URI"],
-
                             PHP_URL_PATH
-                        ) . '?action=add&courseid=' . $coursevalue->id . '">
-
-                                                            ' . get_string('edit', 'tool_leeloolxp_sync') . '</a></li>';
+                        ) .
+                            '?action=add&courseid=' . $coursevalue->id . '">
+                        ' . get_string('edit', 'tool_leeloolxp_sync') .
+                            '</a>
+                        </li>';
 
                         echo '<li>
                             <a href="javascript:void()"
@@ -2790,12 +2850,12 @@ if (!isset($reqaction)) {
                                                                 ' . get_string('resync', 'tool_leeloolxp_sync') . '</a></li>';
                     } else {
 
-                        echo '<li><a href="' . parse_url(
-
-                            $_SERVER['REQUEST_URI'],
-                            PHP_URL_PATH
-
-                        ) . '?action=add&courseid=' . $coursevalue->id . '">' . get_string('add', 'tool_leeloolxp_sync') . '</a></li>';
+                        echo '<li>
+                        <a href="
+                        ' . parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) . '?action=add&courseid=' .
+                            $coursevalue->id . '">'
+                            . get_string('add', 'tool_leeloolxp_sync') .
+                            '</a></li>';
                     }
 
                     echo '</ul>
@@ -3088,9 +3148,10 @@ if (isset($reqaction)) {
                                             $alreadyenabled = $DB->get_record_sql("SELECT id FROM
 
                                                     {tool_leeloolxp_sync}
-
-                                                    where activityid = ? and enabled = '1' order by id desc limit 1", [$activityids->id]);
-                                            $sectiondataa = $DB->get_record_sql("SELECT section FROM {course_modules} WHERE id = ? ", [$activityids->id]);
+                                                    where activityid = ? and enabled = '1'
+                                                    order by id desc limit 1", [$activityids->id]);
+                                            $sectiondataa = $DB->get_record_sql("SELECT section FROM {course_modules}
+                                            WHERE id = ? ", [$activityids->id]);
 
                                             $enabled = false;
 
@@ -3187,8 +3248,10 @@ if (isset($reqaction)) {
 
                                             if ($enabled) {
                                                 echo '<li>
-                                                <a onclick="UnsyncActivity(' . $activityids->id . ')" href="#">' . get_string('unsync', 'tool_leeloolxp_sync') . '</a>
-                                                </li>';
+                                                    <a onclick="UnsyncActivity(' . $activityids->id . ')" href="#">'
+                                                    . get_string('unsync', 'tool_leeloolxp_sync') .
+                                                    '</a>
+                                                    </li>';
                                             } else {
 
                                                 $querystring = $coursedetails->fullname . "$$" .
@@ -3200,10 +3263,10 @@ if (isset($reqaction)) {
                                                     $sectionsdetails->summary . "$$" .
 
                                                     strip_tags($valuefinal->intro . "$$" .
-
                                                         $activitystartdates . "$$" .
-
-                                                        $activityenddatess . "$$" . $tbl . "$$" . $iconurl . "$$" . $quiztype . "$$" . $difficulty) . "$$" .
+                                                        $activityenddatess . "$$" . $tbl . "$$" . $iconurl
+                                                        . "$$" . $quiztype . "$$" . $difficulty)
+                                                    . "$$" .
 
                                                     $sectiondataa->section;
 
@@ -3225,7 +3288,9 @@ if (isset($reqaction)) {
 
                                             if (isset($valuefinal->questionsperpage)) {
                                                 $isquiz = $DB->get_record_sql(
-                                                    "SELECT id FROM {tool_leeloolxp_sync} where activityid =  ? and is_quiz = '1' order by id desc limit 1",
+                                                    "SELECT id FROM {tool_leeloolxp_sync}
+                                                    where activityid =  ? and is_quiz = '1'
+                                                    order by id desc limit 1",
                                                     [$activityids->id]
                                                 );
 
@@ -3242,7 +3307,8 @@ if (isset($reqaction)) {
                                                     echo "checked='checked'";
                                                 }
 
-                                                echo 'name="quiz_sync[]" class="quiz_sync_check" value="' . $activityids->id . '"></td></tr>';
+                                                echo 'name="quiz_sync[]" class="quiz_sync_check"
+                                                value="' . $activityids->id . '"></td></tr>';
                                             } else {
 
                                                 echo '<td></td></tr>';
@@ -3515,9 +3581,13 @@ echo $OUTPUT->footer(); ?>
 
             <div class="sure-btn">
 
-                <button data_id="" onclick="btn_yes_activityunsync();" class="btn btn_yes_activityunsync"><?php echo get_string('yessure', 'tool_leeloolxp_sync'); ?></button>
+                <button data_id="" onclick="btn_yes_activityunsync();" class="btn btn_yes_activityunsync">
+                    <?php echo get_string('yessure', 'tool_leeloolxp_sync'); ?>
+                </button>
 
-                <button onclick="activity_cls_popup();" class="btn activity_cls_popup"><?php echo get_string('close', 'tool_leeloolxp_sync'); ?></button>
+                <button onclick="activity_cls_popup();" class="btn activity_cls_popup">
+                    <?php echo get_string('close', 'tool_leeloolxp_sync'); ?>
+                </button>
 
             </div>
 
@@ -3549,9 +3619,13 @@ echo $OUTPUT->footer(); ?>
 
             <div class="sure-btn">
 
-                <button data_id="" data_name="" onclick="btn_yes_courseunsync();" class="btn btn_yes_courseunsync"><?php echo get_string('yessure', 'tool_leeloolxp_sync'); ?></button>
+                <button data_id="" data_name="" onclick="btn_yes_courseunsync();" class="btn btn_yes_courseunsync">
+                    <?php echo get_string('yessure', 'tool_leeloolxp_sync'); ?>
+                </button>
 
-                <button onclick="course_cls_popup();" class="btn course_cls_popup"><?php echo get_string('close', 'tool_leeloolxp_sync'); ?></button>
+                <button onclick="course_cls_popup();" class="btn course_cls_popup">
+                    <?php echo get_string('close', 'tool_leeloolxp_sync'); ?>
+                </button>
 
             </div>
 

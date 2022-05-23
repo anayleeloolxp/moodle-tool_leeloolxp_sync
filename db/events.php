@@ -55,11 +55,6 @@ $observers = array(
         'callback' => '\tool_leeloolxp_sync\syncobserver::course_category_delete',
     ),
 
-    /*array(
-        'eventname' => '*',
-        'callback' => '\tool_leeloolxp_sync\syncobserver::badge_createdd',
-    ),*/
-
     array(
         'eventname' => '\core\event\cohort_member_added',
         'callback' => '\tool_leeloolxp_sync\syncobserver::badge_createdd',

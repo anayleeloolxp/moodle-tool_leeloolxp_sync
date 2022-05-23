@@ -104,7 +104,11 @@ class syncobserver {
 
         $user = $DB->get_record('user', array('id' => $userid));
 
-        $postdata = array('email' => base64_encode($user->email), 'completionstate' => $completionstate, 'activity_id' => $moduleid);
+        $postdata = array(
+            'email' => base64_encode($user->email),
+            'completionstate' => $completionstate,
+            'activity_id' => $moduleid
+        );
 
         $url = $teamniourl . '/admin/sync_moodle_course/mark_completed_by_moodle_user';
 
@@ -717,7 +721,11 @@ class syncobserver {
             $output = $curl->post($url, $postdata, $options);
         }
 
-        if ($eventname == '\core\event\cohort_created' || $eventname ==  '\core\event\cohort_updated' || $eventname == '\core\event\cohort_deleted') {
+        if (
+            $eventname == '\core\event\cohort_created' ||
+            $eventname == '\core\event\cohort_updated' ||
+            $eventname == '\core\event\cohort_deleted'
+        ) {
 
             $eventdata = $events->get_data();
             $objecttable = $eventdata['objecttable'];
@@ -749,9 +757,6 @@ class syncobserver {
             $eventdata = $events->get_data();
             $courseid = $eventdata['objectid'];
             $categoryid = $eventdata['other']['updatedfields']['category'];
-
-
-
             $postdata = '&useremail=' . base64_encode($USER->email) . '&courseid=' . $courseid . '&categoryid=' . $categoryid;
 
             $url = $teamniourl . '/admin/sync_moodle_course/move_course_category';
@@ -771,7 +776,8 @@ class syncobserver {
             // User suspended && deleted.
             $eventdata = $events->get_data();
             $userid = $eventdata['objectid'];
-            $userdata = $DB->get_record_sql("select email,deleted,suspended,timemodified,username from {user} where id = ?", [$userid]);
+            $userdata = $DB->get_record_sql("select email,deleted,suspended,timemodified,username
+            from {user} where id = ?", [$userid]);
             if ($eventname == '\core\event\user_deleted') {
                 $useremail = str_replace('.' . $userdata->timemodified, '', $userdata->username);
                 $userdata->email = $useremail;
@@ -813,7 +819,12 @@ class syncobserver {
             // Forum reply.
             $eventdata = $events->get_data();
             $userid = $eventdata['userid'];
-            $useralldiscussion = $DB->get_records_sql("SELECT fp.id  post_id, fp.discussion , fp.created , fp.modified , fd.course , cm.id activityid FROM {forum_posts} fp left join {forum_discussions} fd on fd.id = fp.discussion left join {course_modules} cm on cm.instance = fd.forum where fp.userid = ? AND module = '9' ", [$userid]);
+            $useralldiscussion = $DB->get_records_sql("SELECT fp.id  post_id, fp.discussion , fp.created ,
+            fp.modified , fd.course , cm.id activityid
+            FROM {forum_posts} fp
+            left join {forum_discussions} fd on fd.id = fp.discussion
+            left join {course_modules} cm on cm.instance = fd.forum
+            where fp.userid = ? AND module = '9' ", [$userid]);
             $postdataforum = '&useremail=' . base64_encode($USER->email) . '&data=' . json_encode($useralldiscussion);
 
             $url = $teamniourl . '/admin/sync_moodle_course/insert_update_forum_posts';
@@ -833,7 +844,11 @@ class syncobserver {
             // Discussion created/deleted.
             $eventdata = $events->get_data();
             $userid = $eventdata['userid'];
-            $useralldiscussion = $DB->get_records_sql("SELECT fd.id  moodleid, fd.course , fd.name , fd.name , fd.timemodified , cm.id activityid FROM {forum_discussions} fd left join {course_modules} cm on cm.instance = fd.forum where fd.userid = ? AND module = '9' ", [$userid]);
+            $useralldiscussion = $DB->get_records_sql("SELECT fd.id  moodleid, fd.course , fd.name ,
+            fd.name , fd.timemodified , cm.id activityid
+            FROM {forum_discussions} fd
+            left join {course_modules} cm on cm.instance = fd.forum
+            where fd.userid = ? AND module = '9' ", [$userid]);
             $postdataforum = '&useremail=' . base64_encode($USER->email) . '&data=' . json_encode($useralldiscussion);
 
             $url = $teamniourl . '/admin/sync_moodle_course/insert_update_forum_discussion';
@@ -849,7 +864,17 @@ class syncobserver {
             $output = $curl->post($url, $postdataforum, $options);
         }
 
-        if ($eventname == '\assignsubmission_file\event\assessable_uploaded' || $eventname == '\mod_choice\event\answer_created' || $eventname == '\mod_feedback\event\response_submitted' || $eventname == '\mod_forum\event\assessable_uploaded' || $eventname == '\mod_glossary\event\entry_created' || $eventname == '\mod_lesson\event\question_answered' || $eventname == '\mod_quiz\event\attempt_submitted' || $eventname == '\mod_survey\event\response_submitted' || $eventname == '\mod_workshop\event\submission_created') {
+        if (
+            $eventname == '\assignsubmission_file\event\assessable_uploaded' ||
+            $eventname == '\mod_choice\event\answer_created' ||
+            $eventname == '\mod_feedback\event\response_submitted' ||
+            $eventname == '\mod_forum\event\assessable_uploaded' ||
+            $eventname == '\mod_glossary\event\entry_created' ||
+            $eventname == '\mod_lesson\event\question_answered' ||
+            $eventname == '\mod_quiz\event\attempt_submitted' ||
+            $eventname == '\mod_survey\event\response_submitted' ||
+            $eventname == '\mod_workshop\event\submission_created'
+        ) {
 
             $eventdata = $events->get_data();
             $postdataassign = '&useremail=' . base64_encode($USER->email) . '&activity_id=' . $eventdata['contextinstanceid'];
@@ -887,10 +912,15 @@ class syncobserver {
             $output = $curl->post($url, $postdataworkshopgrade, $options);
         }
 
-        if ($eventname == '\mod_workshop\event\assessable_uploaded' || $eventname == '\assignsubmission_onlinetext\event\assessable_uploaded' || $eventname == '\mod_assign\event\assessable_submitted') {
+        if (
+            $eventname == '\mod_workshop\event\assessable_uploaded' ||
+            $eventname == '\assignsubmission_onlinetext\event\assessable_uploaded' ||
+            $eventname == '\mod_assign\event\assessable_submitted'
+        ) {
             $eventdata = $events->get_data();
 
-            $postdataworkshopgrade = '&useremail=' . base64_encode($USER->email) . '&activity_id=' . $eventdata['contextinstanceid'];
+            $postdataworkshopgrade = '&useremail=' . base64_encode($USER->email) .
+                '&activity_id=' . $eventdata['contextinstanceid'];
 
             $url = $teamniourl . '/admin/sync_moodle_course/insert_update_user_submission_completion';
             $curl = new curl;
@@ -914,7 +944,10 @@ class syncobserver {
             $sql = "SELECT email FROM {user} where id = ?";
             $userdetail = $DB->get_record_sql($sql, [$eventdata['relateduserid']]);
 
-            $postdataworkshopgrade = '&coursedatamain=' . json_encode($coursedatamain) . '&useremail=' . base64_encode($userdetail->email) . '&gradedby=' . base64_encode($USER->email) . '&activity_id=' . $eventdata['contextinstanceid'];
+            $postdataworkshopgrade = '&coursedatamain=' . json_encode($coursedatamain) .
+                '&useremail=' . base64_encode($userdetail->email) .
+                '&gradedby=' . base64_encode($USER->email) .
+                '&activity_id=' . $eventdata['contextinstanceid'];
 
             $url = $teamniourl . '/admin/sync_moodle_course/insert_update_activity_completion';
             $curl = new curl;
@@ -933,9 +966,13 @@ class syncobserver {
             $eventdata = $events->get_data();
             $courseid = $eventdata['courseid'];
             $sql = "SELECT email FROM {user} where id = ?";
-            $userscompletedcourse = $DB->get_records_sql("SELECT DISTINCT {user}.email , cc.id , cc.timestarted , cc.reaggregate FROM {course_completions} cc left join {user} on cc.userid = {user}.id where cc.course = ? group by cc.userid,cc.id,{user}.email", [$courseid]);
+            $userscompletedcourse = $DB->get_records_sql("SELECT DISTINCT {user}.email , cc.id , cc.timestarted , cc.reaggregate
+            FROM {course_completions} cc left join {user} on cc.userid = {user}.id
+            where cc.course = ?
+            group by cc.userid,cc.id,{user}.email", [$courseid]);
 
-            $postdatamain = '&userscompletedcourse=' . json_encode($userscompletedcourse) . '&email=' . base64_encode($USER->email) . '&is_bulk_insert=' . $courseid;
+            $postdatamain = '&userscompletedcourse=' . json_encode($userscompletedcourse) .
+                '&email=' . base64_encode($USER->email) . '&is_bulk_insert=' . $courseid;
 
             $url = $teamniourl . '/admin/sync_moodle_course/insert_update_course_completion';
             $curl = new curl;
@@ -955,7 +992,10 @@ class syncobserver {
             $relateduserid = $eventdata['relateduserid'];
             $rolenames = '';
 
-            $userroles = $DB->get_records_sql("SELECT  DISTINCT rol.shortname  FROM {role_assignments} ra left join {role} rol on ra.roleid = rol.id where ra.userid = ? group by ra.roleid,rol.shortname ", [$relateduserid]);
+            $userroles = $DB->get_records_sql("SELECT  DISTINCT rol.shortname
+            FROM {role_assignments} ra left join {role} rol on ra.roleid = rol.id
+            where ra.userid = ?
+            group by ra.roleid,rol.shortname ", [$relateduserid]);
 
             if (!empty($userroles)) {
                 foreach ($userroles as $key => $value) {
@@ -973,7 +1013,9 @@ class syncobserver {
             $sql = "SELECT email FROM {user} where id = ?";
             $userdetail = $DB->get_record_sql($sql, [$relateduserid]);
 
-            $postdatamain = '&rolenames=' . json_encode($rolenames) . '&user_email=' . base64_encode($userdetail->email) . '&email_changedby=' . base64_encode($USER->email);
+            $postdatamain = '&rolenames=' . json_encode($rolenames) .
+                '&user_email=' . base64_encode($userdetail->email) .
+                '&email_changedby=' . base64_encode($USER->email);
 
             $url = $teamniourl . '/admin/sync_moodle_course/update_user_role_changed';
             $curl = new curl;
@@ -1006,7 +1048,9 @@ class syncobserver {
             $sql = "SELECT email FROM {user} where id = ?";
             $userdetail = $DB->get_record_sql($sql, [$eventdata['relateduserid']]);
 
-            $postdataworkshopgrade = '&workshopdatamain=' . json_encode($workshopdatamain) . '&email=' . base64_encode($userdetail->email) . '&gradedby=' . base64_encode($USER->email);
+            $postdataworkshopgrade = '&workshopdatamain=' . json_encode($workshopdatamain) .
+                '&email=' . base64_encode($userdetail->email) .
+                '&gradedby=' . base64_encode($USER->email);
 
             $url = $teamniourl . '/admin/sync_moodle_course/update_grade_workshop_grade';
             $curl = new curl;
@@ -1093,7 +1137,11 @@ class syncobserver {
 
             if (!empty($eventdata['other']['overridden'])) {
                 $sql = "SELECT * FROM {grade_grades_history} where oldid = ? AND itemid = ? AND userid = ? ORDER BY id DESC ";
-                $forumgradedata = $DB->get_record_sql($sql, [$eventdata['objectid'], $eventdata['other']['itemid'], $eventdata['relateduserid']]);
+                $forumgradedata = $DB->get_record_sql($sql, [
+                    $eventdata['objectid'],
+                    $eventdata['other']['itemid'],
+                    $eventdata['relateduserid']
+                ]);
 
                 $url = $teamniourl . '/admin/sync_moodle_course/insert_grade_history';
             } else if (!empty($forumgradedata)) {
@@ -1110,7 +1158,9 @@ class syncobserver {
                 $url = $teamniourl . '/admin/sync_moodle_course/delete_lesson_grades';
             }
 
-            $postdataforum = '&forumgradedata=' . json_encode($forumgradedata) . '&email=' . base64_encode($userdetail->email) . '&gradedby=' . base64_encode($USER->email);
+            $postdataforum = '&forumgradedata=' . json_encode($forumgradedata) .
+                '&email=' . base64_encode($userdetail->email) .
+                '&gradedby=' . base64_encode($USER->email);
 
             $curl = new curl;
             $options = array(
@@ -1151,7 +1201,10 @@ class syncobserver {
                 }
             }
 
-            $postdataquizgrade = '&quizdata=' . json_encode($quizdata) . '&activity_id=' . json_encode($activityid) . '&email=' . base64_encode($userdetail->email) . '&gradedby=' . base64_encode($USER->email);
+            $postdataquizgrade = '&quizdata=' . json_encode($quizdata) .
+                '&activity_id=' . json_encode($activityid) .
+                '&email=' . base64_encode($userdetail->email) .
+                '&gradedby=' . base64_encode($USER->email);
 
             $url = $teamniourl . '/admin/sync_moodle_course/update_grade_quiz_grade';
             $curl = new curl;
@@ -1190,7 +1243,12 @@ class syncobserver {
                 }
             }
 
-            $postdatalessiongrade = '&lession_grade_data=' . $lessiongradedata . '&grade=' . json_encode($lessionrec->grade) . '&late=' . json_encode($lessionrec->late) . '&completed=' . json_encode($lessionrec->completed) . '&email=' . base64_encode($userdetail->email) . '&gradedby=' . base64_encode($USER->email) . '&pass_fail=' . json_encode($passfail);
+            $postdatalessiongrade = '&lession_grade_data=' . $lessiongradedata .
+                '&grade=' . json_encode($lessionrec->grade) . '&late=' . json_encode($lessionrec->late) .
+                '&completed=' . json_encode($lessionrec->completed) .
+                '&email=' . base64_encode($userdetail->email) .
+                '&gradedby=' . base64_encode($USER->email) .
+                '&pass_fail=' . json_encode($passfail);
 
             $url = $teamniourl . '/admin/sync_moodle_course/update_grade_lession_grade';
             $curl = new curl;
@@ -1217,7 +1275,10 @@ class syncobserver {
             $sql = "SELECT email FROM {user} where id = ?";
             $userdetail = $DB->get_record_sql($sql, [$rec->userid]);
 
-            $postdataassigngrade = '&assign_data_main=' . $assigndatamain . '&assign_data_common=' . $assigndatacommon . '&email=' . base64_encode($userdetail->email) . '&gradedby=' . base64_encode($USER->email);
+            $postdataassigngrade = '&assign_data_main=' . $assigndatamain .
+                '&assign_data_common=' . $assigndatacommon .
+                '&email=' . base64_encode($userdetail->email) .
+                '&gradedby=' . base64_encode($USER->email);
 
             $url = $teamniourl . '/admin/sync_moodle_course/update_grade_assign_submit';
             $curl = new curl;
@@ -1279,7 +1340,8 @@ class syncobserver {
             $gredegradedatastring = '';
 
             if ($itemdata->itemtype == 'category' && !empty($itemdata->iteminstance)) {
-                $gradecategorydata = $DB->get_records_sql("select * from {grade_categories} where id = ? ", [$itemdata->iteminstance]);
+                $gradecategorydata = $DB->get_records_sql("select * from {grade_categories}
+                where id = ? ", [$itemdata->iteminstance]);
                 $gradecategory = '&grade_category=' . json_encode($gradecategorydata);
             }
         } else {
@@ -1293,17 +1355,27 @@ class syncobserver {
         $gradegradesid = $_SESSION['gradegradesid'];
         $coursecompleteid = $_SESSION['coursecompleteid'];
 
-        $sql = "SELECT gg.*,u.email,cm.id activity_id FROM {grade_grades} gg left join {user} u on gg.userid = u.id left join  {grade_items} gi on gi.id = gg.itemid left join {modules} module on module.name = gi.itemmodule left join {course_modules} cm on cm.course = gi.courseid AND cm.module = module.id AND cm.instance = gi.iteminstance where gg.id > ? ";
+        $sql = "SELECT gg.*,u.email,cm.id activity_id
+        FROM {grade_grades} gg left join {user} u on gg.userid = u.id
+        left join  {grade_items} gi on gi.id = gg.itemid
+        left join {modules} module on module.name = gi.itemmodule
+        left join {course_modules} cm on cm.course = gi.courseid
+        AND cm.module = module.id AND cm.instance = gi.iteminstance
+        where gg.id > ? ";
         $gradegradesdata = $DB->get_records_sql($sql, [$gradegradesid]);
 
-        $sql = "SELECT cc.*,u.email  FROM {course_completions} cc left join {user} u on cc.userid = u.id where cc.id > ? ";
+        $sql = "SELECT cc.*,u.email  FROM {course_completions} cc
+        left join {user} u on cc.userid = u.id
+        where cc.id > ? ";
         $coursecompletedata = $DB->get_records_sql($sql, [$coursecompleteid]);
 
-        $postdata = '&coursecompletedata=' . json_encode($coursecompletedata) . '&gradegradesdata=' . json_encode($gradegradesdata) . '&moodle_user_id=' . $userid . '&course_id=' . $courseid . '&activity_id=' .
-
-            $contextinstanceid . "&mod_name=" . $component . "&user_email=" . base64_encode($USER->email) .
-
-            "&action=" . $action . '&detail=' . $alldetail . '&event_name=' . $eventname . $grededata . $gredegradedatastring . $gradecategory;
+        $postdata = '&coursecompletedata=' . json_encode($coursecompletedata) .
+            '&gradegradesdata=' . json_encode($gradegradesdata) .
+            '&moodle_user_id=' . $userid . '&course_id=' . $courseid .
+            '&activity_id=' . $contextinstanceid . "&mod_name=" . $component .
+            "&user_email=" . base64_encode($USER->email) . "&action=" . $action .
+            '&detail=' . $alldetail .
+            '&event_name=' . $eventname . $grededata . $gredegradedatastring . $gradecategory;
 
         $url = $teamniourl . '/admin/sync_moodle_course/update_viewed_log';
         $curl = new curl;
