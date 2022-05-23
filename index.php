@@ -106,7 +106,7 @@ if ($infoleeloolxp->status != 'false') {
 if (isset($reqsyncategory) && $reqsyncategory == '1') {
     $courseid = $reqcourseid1;
 
-    $categorydata = $DB->get_records_sql('SELECT * FROM {course_categories} ');
+    $categorydata = $DB->get_records_sql("SELECT * FROM {course_categories}");
     if (!empty($categorydata)) {
         $post['cat_data'] = json_encode($categorydata);
         $url = $teamniourl . '/admin/sync_moodle_course/update_insert_categories';
@@ -168,9 +168,7 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
             if ($sectionsdetails->name != '' && $sectionsdetails->sequence != '') {
                 $sequence = $sectionsdetails->sequence;
 
-                $modulescourse = $DB->get_records_sql("select * from
-
-                {course_modules} where section = ? ORDER BY ID", [$sectionsdetails->id]);
+                $modulescourse = $DB->get_records_sql("select * from {course_modules} where section = ? ORDER BY ID", [$sectionsdetails->id]);
 
                 if (!empty($modulescourse)) {
                     foreach ($modulescourse as $coursemoduledetails) {
@@ -387,7 +385,7 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
 
                                         {tool_leeloolxp_sync}
 
-                                        where activityid = ? and enabled = '1' limit 1", [$activityids->id]);
+                                        where activityid = ? and enabled = ? limit ?", [$activityids->id, 1, 1]);
 
                                         $enabled = false;
 
@@ -490,7 +488,7 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
 
         if (empty($coursehierarchy)) {
 
-            $sql = "SELECT id cid,name cname,section csection ,sequence csequence,id sectionid FROM {course_sections} cs  WHERE course = ? AND section != 0 AND section != '0'   ";
+            $sql = "SELECT id cid,name cname,section csection ,sequence csequence,id sectionid FROM {course_sections} cs  WHERE course = ? AND section != 0 AND section != '0'";
 
             $coursehierarchy = $DB->get_records_sql($sql, [$courseidagain]);
         }
