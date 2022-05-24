@@ -121,7 +121,7 @@ if (isset($reqsyncategory) && $reqsyncategory == '1') {
 
             'CURLOPT_POST' => count($post),
             'CURLOPT_HTTPHEADER' => array(
-                'LeelooLXPToken: ' . get_config('local_leeloolxpapi')->leelooapitoken . ''
+                'Leeloolxptoken: ' . get_config('local_leeloolxpapi')->leelooapitoken . ''
             )
         );
 
@@ -1111,7 +1111,7 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
 
             'CURLOPT_POST' => count($post),
             'CURLOPT_HTTPHEADER' => array(
-                'LeelooLXPToken: ' . get_config('local_leeloolxpapi')->leelooapitoken . ''
+                'Leeloolxptoken: ' . get_config('local_leeloolxpapi')->leelooapitoken . ''
             )
         );
 
@@ -1181,7 +1181,7 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
 
                 'CURLOPT_POST' => count($isqpost),
                 'CURLOPT_HTTPHEADER' => array(
-                    'LeelooLXPToken: ' . get_config('local_leeloolxpapi')->leelooapitoken . ''
+                    'Leeloolxptoken: ' . get_config('local_leeloolxpapi')->leelooapitoken . ''
                 )
             );
 
@@ -1526,7 +1526,7 @@ if (isset($reqresyncactivity)) {
 
         'CURLOPT_POST' => count($post),
         'CURLOPT_HTTPHEADER' => array(
-            'LeelooLXPToken: ' . get_config('local_leeloolxpapi')->leelooapitoken . ''
+            'Leeloolxptoken: ' . get_config('local_leeloolxpapi')->leelooapitoken . ''
         )
     );
 
@@ -1880,7 +1880,7 @@ if (isset($reqresync)) {
 
         'CURLOPT_POST' => count($post),
         'CURLOPT_HTTPHEADER' => array(
-            'LeelooLXPToken: ' . get_config('local_leeloolxpapi')->leelooapitoken . ''
+            'Leeloolxptoken: ' . get_config('local_leeloolxpapi')->leelooapitoken . ''
         )
     );
 
@@ -1915,7 +1915,7 @@ if (isset($requnsyncid) && !empty($requnsyncid)) {
         'CURLOPT_POST' => count($post),
 
         'CURLOPT_HTTPHEADER' => array(
-            'LeelooLXPToken: ' . get_config('local_leeloolxpapi')->leelooapitoken . ''
+            'Leeloolxptoken: ' . get_config('local_leeloolxpapi')->leelooapitoken . ''
         )
     );
 
@@ -1946,7 +1946,7 @@ if (isset($reqid) && !empty($reqid)) {
         'CURLOPT_POST' => count($post),
 
         'CURLOPT_HTTPHEADER' => array(
-            'LeelooLXPToken: ' . get_config('local_leeloolxpapi')->leelooapitoken . ''
+            'Leeloolxptoken: ' . get_config('local_leeloolxpapi')->leelooapitoken . ''
         )
     );
 
@@ -2630,7 +2630,7 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
 
             'CURLOPT_POST' => count($post),
             'CURLOPT_HTTPHEADER' => array(
-                'LeelooLXPToken: ' . get_config('local_leeloolxpapi')->leelooapitoken . ''
+                'Leeloolxptoken: ' . get_config('local_leeloolxpapi')->leelooapitoken . ''
             )
         );
 
@@ -2702,7 +2702,7 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
 
                 'CURLOPT_POST' => count($isqpost),
                 'CURLOPT_HTTPHEADER' => array(
-                    'LeelooLXPToken: ' . get_config('local_leeloolxpapi')->leelooapitoken . ''
+                    'Leeloolxptoken: ' . get_config('local_leeloolxpapi')->leelooapitoken . ''
                 )
             );
 
