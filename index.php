@@ -3206,13 +3206,16 @@ if (isset($reqaction)) {
 
                                                     if (isset($quizdata->quiztype)) {
                                                         if ($quizdata->quiztype == 'discover') {
-                                                            $iconurl = $CFG->wwwroot . '/local/leeloolxptrivias/pix/Discover_on.png';
+                                                            $iconurl = $CFG->wwwroot .
+                                                                '/local/leeloolxptrivias/pix/Discover_on.png';
                                                         } else if ($quizdata->quiztype == 'exercises') {
-                                                            $iconurl = $CFG->wwwroot . '/local/leeloolxptrivias/pix/Studycase_on.png';
+                                                            $iconurl = $CFG->wwwroot .
+                                                                '/local/leeloolxptrivias/pix/Studycase_on.png';
                                                         } else if ($quizdata->quiztype == 'trivias') {
                                                             $iconurl = $CFG->wwwroot . '/local/leeloolxptrivias/pix/Trivia_on.png';
                                                         } else if ($quizdata->quiztype == 'assessments') {
-                                                            $iconurl = $CFG->wwwroot . '/local/leeloolxptrivias/pix/Assessments_on.png';
+                                                            $iconurl = $CFG->wwwroot .
+                                                                '/local/leeloolxptrivias/pix/Assessments_on.png';
                                                         } else if ($quizdata->quiztype == 'quest') {
                                                             $iconurl = $CFG->wwwroot . '/local/leeloolxptrivias/pix/Quest_on.png';
                                                         } else if ($quizdata->quiztype == 'mission') {
