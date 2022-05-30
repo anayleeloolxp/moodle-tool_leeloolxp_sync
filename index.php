@@ -2955,429 +2955,430 @@ if (isset($reqaction)) {
                 if ($sectionsdetails->name == '' && $sectionsdetails->section != 0) {
                     $sectionsdetails->name = get_string('topic', 'tool_leeloolxp_sync') . $sectionsdetails->section;
                 }
-                //if ($sectionsdetails->name != '' && $sectionsdetails->sequence != '') {
-                    $sequence = $sectionsdetails->sequence;
 
-                    $modulescourse = $DB->get_records_sql("select * from
+                // If($sectionsdetails->name != '' && $sectionsdetails->sequence != '').
+
+                $sequence = $sectionsdetails->sequence;
+
+                $modulescourse = $DB->get_records_sql("select * from
 
                             {course_modules} where section = ? ORDER BY ID", [$sectionsdetails->id]);
 
-                    if (!empty($modulescourse)) {
-                        foreach ($modulescourse as $coursemoduledetails) {
-                            $moduleid = $coursemoduledetails->module;
+                if (!empty($modulescourse)) {
+                    foreach ($modulescourse as $coursemoduledetails) {
+                        $moduleid = $coursemoduledetails->module;
 
-                            $instance = $coursemoduledetails->instance;
+                        $instance = $coursemoduledetails->instance;
 
-                            $completionexpected = $coursemoduledetails->completionexpected;
+                        $completionexpected = $coursemoduledetails->completionexpected;
 
-                            $modules = $DB->get_records("modules", array('id' => $moduleid));
+                        $modules = $DB->get_records("modules", array('id' => $moduleid));
 
-                            if (!empty($modules)) {
-                                foreach ($modules as $key => $value) {
-                                    $tbl = $value->name;
+                        if (!empty($modules)) {
+                            foreach ($modules as $key => $value) {
+                                $tbl = $value->name;
 
-                                    $moduledetail = $DB->get_records($tbl, array('id' => $instance));
+                                $moduledetail = $DB->get_records($tbl, array('id' => $instance));
 
-                                    if (!empty($moduledetail)) {
-                                        foreach ($moduledetail as $key => $valuefinal) {
-                                            if ($tbl == 'lesson') {
-                                                if ($valuefinal->available != 0) {
-                                                    $activitystartdates = $valuefinal->available;
-                                                } else {
-                                                    $activitystartdates = $coursedetails->startdate;
-                                                }
-
-                                                if ($valuefinal->deadline != 0) {
-                                                    $activityenddatess = $valuefinal->deadline;
-                                                } else {
-                                                    if ($completionexpected != 0) {
-                                                        $activityenddatess = $completionexpected;
-                                                    } else {
-                                                        $activityenddatess = $coursedetails->enddate;
-                                                    }
-                                                }
-                                            } else if ($tbl == 'quiz') {
-                                                if ($valuefinal->timeopen != 0) {
-                                                    $activitystartdates = $valuefinal->timeopen;
-                                                } else {
-                                                    $activitystartdates = $coursedetails->startdate;
-                                                }
-
-                                                if ($valuefinal->timeclose != 0) {
-                                                    $activityenddatess = $valuefinal->timeclose;
-                                                } else {
-                                                    if ($completionexpected != 0) {
-                                                        $activityenddatess = $completionexpected;
-                                                    } else {
-                                                        $activityenddatess = $coursedetails->enddate;
-                                                    }
-                                                }
-                                            } else if ($tbl == 'assign') {
-                                                if ($valuefinal->allowsubmissionsfromdate != 0) {
-                                                    $activitystartdates = $valuefinal->allowsubmissionsfromdate;
-                                                } else {
-                                                    $activitystartdates = $coursedetails->startdate;
-                                                }
-
-                                                if ($valuefinal->duedate != 0) {
-                                                    $activityenddatess = $valuefinal->duedate;
-                                                } else {
-                                                    if ($completionexpected != 0) {
-                                                        $activityenddatess = $completionexpected;
-                                                    } else {
-                                                        $activityenddatess = $coursedetails->enddate;
-                                                    }
-                                                }
-                                            } else if ($tbl == 'chat') {
-                                                if ($valuefinal->chattime != 0) {
-                                                    $activitystartdates = $valuefinal->chattime;
-                                                } else {
-                                                    $activitystartdates = $coursedetails->startdate;
-                                                }
-
-                                                if ($valuefinal->chattime != 0) {
-                                                    $activityenddatess = $valuefinal->chattime;
-                                                } else {
-                                                    if ($completionexpected != 0) {
-                                                        $activityenddatess = $completionexpected;
-                                                    } else {
-                                                        $activityenddatess = $coursedetails->enddate;
-                                                    }
-                                                }
-                                            } else if ($tbl == 'choice') {
-                                                if ($valuefinal->timeopen != 0) {
-                                                    $activitystartdates = $valuefinal->timeopen;
-                                                } else {
-                                                    $activitystartdates = $coursedetails->startdate;
-                                                }
-
-                                                if ($valuefinal->timeclose != 0) {
-                                                    $activityenddatess = $valuefinal->timeclose;
-                                                } else {
-                                                    if ($completionexpected != 0) {
-                                                        $activityenddatess = $completionexpected;
-                                                    } else {
-                                                        $activityenddatess = $coursedetails->enddate;
-                                                    }
-                                                }
-                                            } else if ($tbl == 'data') {
-                                                if ($valuefinal->timeavailablefrom != 0) {
-                                                    $activitystartdates = $valuefinal->timeavailablefrom;
-                                                } else {
-                                                    $activitystartdates = $coursedetails->startdate;
-                                                }
-
-                                                if ($valuefinal->timeavailableto != 0) {
-                                                    $activityenddatess = $valuefinal->timeavailableto;
-                                                } else {
-                                                    if ($completionexpected != 0) {
-                                                        $activityenddatess = $completionexpected;
-                                                    } else {
-                                                        $activityenddatess = $coursedetails->enddate;
-                                                    }
-                                                }
-                                            } else if ($tbl == 'feedback') {
-                                                if ($valuefinal->timeopen != 0) {
-                                                    $activitystartdates = $valuefinal->timeopen;
-                                                } else {
-                                                    $activitystartdates = $coursedetails->startdate;
-                                                }
-
-                                                if ($valuefinal->timeclose != 0) {
-                                                    $activityenddatess = $valuefinal->timeclose;
-                                                } else {
-                                                    if ($completionexpected != 0) {
-                                                        $activityenddatess = $completionexpected;
-                                                    } else {
-                                                        $activityenddatess = $coursedetails->enddate;
-                                                    }
-                                                }
-                                            } else if ($tbl == 'forum') {
-                                                if ($valuefinal->duedate != 0) {
-                                                    $activitystartdates = $valuefinal->duedate;
-                                                } else {
-                                                    $activitystartdates = $coursedetails->startdate;
-                                                }
-
-                                                if ($valuefinal->cutoffdate != 0) {
-                                                    $activityenddatess = $valuefinal->cutoffdate;
-                                                } else {
-                                                    if ($completionexpected != 0) {
-                                                        $activityenddatess = $completionexpected;
-                                                    } else {
-                                                        $activityenddatess = $coursedetails->enddate;
-                                                    }
-                                                }
-                                            } else if ($tbl == 'leeloolxpvc') {
-                                                if ($valuefinal->timeopen != 0) {
-                                                    $activitystartdates = $valuefinal->timeopen;
-                                                } else {
-                                                    $activitystartdates = $coursedetails->startdate;
-                                                }
-
-                                                if ($valuefinal->timeopen != 0) {
-                                                    $activityenddatess = $valuefinal->timeopen;
-                                                } else {
-                                                    if ($completionexpected != 0) {
-                                                        $activityenddatess = $completionexpected;
-                                                    } else {
-                                                        $activityenddatess = $coursedetails->enddate;
-                                                    }
-                                                }
-                                            } else if ($tbl == 'workshop') {
-                                                if ($valuefinal->submissionstart != 0) {
-                                                    $activitystartdates = $valuefinal->submissionstart;
-                                                } else {
-                                                    $activitystartdates = $coursedetails->startdate;
-                                                }
-
-                                                if ($valuefinal->submissionend != 0) {
-                                                    $activityenddatess = $valuefinal->submissionend;
-                                                } else {
-                                                    if ($completionexpected != 0) {
-                                                        $activityenddatess = $completionexpected;
-                                                    } else {
-                                                        $activityenddatess = $coursedetails->enddate;
-                                                    }
-                                                }
-                                            } else if ($tbl == 'scorm') {
-                                                if ($valuefinal->timeopen != 0) {
-                                                    $activitystartdates = $valuefinal->timeopen;
-                                                } else {
-                                                    $activitystartdates = $coursedetails->startdate;
-                                                }
-
-                                                if ($valuefinal->timeclose != 0) {
-                                                    $activityenddatess = $valuefinal->timeclose;
-                                                } else {
-                                                    if ($completionexpected != 0) {
-                                                        $activityenddatess = $completionexpected;
-                                                    } else {
-                                                        $activityenddatess = $coursedetails->enddate;
-                                                    }
-                                                }
+                                if (!empty($moduledetail)) {
+                                    foreach ($moduledetail as $key => $valuefinal) {
+                                        if ($tbl == 'lesson') {
+                                            if ($valuefinal->available != 0) {
+                                                $activitystartdates = $valuefinal->available;
                                             } else {
-
                                                 $activitystartdates = $coursedetails->startdate;
+                                            }
 
+                                            if ($valuefinal->deadline != 0) {
+                                                $activityenddatess = $valuefinal->deadline;
+                                            } else {
                                                 if ($completionexpected != 0) {
                                                     $activityenddatess = $completionexpected;
                                                 } else {
                                                     $activityenddatess = $coursedetails->enddate;
                                                 }
                                             }
+                                        } else if ($tbl == 'quiz') {
+                                            if ($valuefinal->timeopen != 0) {
+                                                $activitystartdates = $valuefinal->timeopen;
+                                            } else {
+                                                $activitystartdates = $coursedetails->startdate;
+                                            }
 
-                                            $activityids = $DB->get_record(
-                                                'course_modules',
+                                            if ($valuefinal->timeclose != 0) {
+                                                $activityenddatess = $valuefinal->timeclose;
+                                            } else {
+                                                if ($completionexpected != 0) {
+                                                    $activityenddatess = $completionexpected;
+                                                } else {
+                                                    $activityenddatess = $coursedetails->enddate;
+                                                }
+                                            }
+                                        } else if ($tbl == 'assign') {
+                                            if ($valuefinal->allowsubmissionsfromdate != 0) {
+                                                $activitystartdates = $valuefinal->allowsubmissionsfromdate;
+                                            } else {
+                                                $activitystartdates = $coursedetails->startdate;
+                                            }
 
-                                                array('instance' => $instance, 'module' => $moduleid)
-                                            );
+                                            if ($valuefinal->duedate != 0) {
+                                                $activityenddatess = $valuefinal->duedate;
+                                            } else {
+                                                if ($completionexpected != 0) {
+                                                    $activityenddatess = $completionexpected;
+                                                } else {
+                                                    $activityenddatess = $coursedetails->enddate;
+                                                }
+                                            }
+                                        } else if ($tbl == 'chat') {
+                                            if ($valuefinal->chattime != 0) {
+                                                $activitystartdates = $valuefinal->chattime;
+                                            } else {
+                                                $activitystartdates = $coursedetails->startdate;
+                                            }
 
-                                            $alreadyenabled = $DB->get_record_sql("SELECT id FROM
+                                            if ($valuefinal->chattime != 0) {
+                                                $activityenddatess = $valuefinal->chattime;
+                                            } else {
+                                                if ($completionexpected != 0) {
+                                                    $activityenddatess = $completionexpected;
+                                                } else {
+                                                    $activityenddatess = $coursedetails->enddate;
+                                                }
+                                            }
+                                        } else if ($tbl == 'choice') {
+                                            if ($valuefinal->timeopen != 0) {
+                                                $activitystartdates = $valuefinal->timeopen;
+                                            } else {
+                                                $activitystartdates = $coursedetails->startdate;
+                                            }
+
+                                            if ($valuefinal->timeclose != 0) {
+                                                $activityenddatess = $valuefinal->timeclose;
+                                            } else {
+                                                if ($completionexpected != 0) {
+                                                    $activityenddatess = $completionexpected;
+                                                } else {
+                                                    $activityenddatess = $coursedetails->enddate;
+                                                }
+                                            }
+                                        } else if ($tbl == 'data') {
+                                            if ($valuefinal->timeavailablefrom != 0) {
+                                                $activitystartdates = $valuefinal->timeavailablefrom;
+                                            } else {
+                                                $activitystartdates = $coursedetails->startdate;
+                                            }
+
+                                            if ($valuefinal->timeavailableto != 0) {
+                                                $activityenddatess = $valuefinal->timeavailableto;
+                                            } else {
+                                                if ($completionexpected != 0) {
+                                                    $activityenddatess = $completionexpected;
+                                                } else {
+                                                    $activityenddatess = $coursedetails->enddate;
+                                                }
+                                            }
+                                        } else if ($tbl == 'feedback') {
+                                            if ($valuefinal->timeopen != 0) {
+                                                $activitystartdates = $valuefinal->timeopen;
+                                            } else {
+                                                $activitystartdates = $coursedetails->startdate;
+                                            }
+
+                                            if ($valuefinal->timeclose != 0) {
+                                                $activityenddatess = $valuefinal->timeclose;
+                                            } else {
+                                                if ($completionexpected != 0) {
+                                                    $activityenddatess = $completionexpected;
+                                                } else {
+                                                    $activityenddatess = $coursedetails->enddate;
+                                                }
+                                            }
+                                        } else if ($tbl == 'forum') {
+                                            if ($valuefinal->duedate != 0) {
+                                                $activitystartdates = $valuefinal->duedate;
+                                            } else {
+                                                $activitystartdates = $coursedetails->startdate;
+                                            }
+
+                                            if ($valuefinal->cutoffdate != 0) {
+                                                $activityenddatess = $valuefinal->cutoffdate;
+                                            } else {
+                                                if ($completionexpected != 0) {
+                                                    $activityenddatess = $completionexpected;
+                                                } else {
+                                                    $activityenddatess = $coursedetails->enddate;
+                                                }
+                                            }
+                                        } else if ($tbl == 'leeloolxpvc') {
+                                            if ($valuefinal->timeopen != 0) {
+                                                $activitystartdates = $valuefinal->timeopen;
+                                            } else {
+                                                $activitystartdates = $coursedetails->startdate;
+                                            }
+
+                                            if ($valuefinal->timeopen != 0) {
+                                                $activityenddatess = $valuefinal->timeopen;
+                                            } else {
+                                                if ($completionexpected != 0) {
+                                                    $activityenddatess = $completionexpected;
+                                                } else {
+                                                    $activityenddatess = $coursedetails->enddate;
+                                                }
+                                            }
+                                        } else if ($tbl == 'workshop') {
+                                            if ($valuefinal->submissionstart != 0) {
+                                                $activitystartdates = $valuefinal->submissionstart;
+                                            } else {
+                                                $activitystartdates = $coursedetails->startdate;
+                                            }
+
+                                            if ($valuefinal->submissionend != 0) {
+                                                $activityenddatess = $valuefinal->submissionend;
+                                            } else {
+                                                if ($completionexpected != 0) {
+                                                    $activityenddatess = $completionexpected;
+                                                } else {
+                                                    $activityenddatess = $coursedetails->enddate;
+                                                }
+                                            }
+                                        } else if ($tbl == 'scorm') {
+                                            if ($valuefinal->timeopen != 0) {
+                                                $activitystartdates = $valuefinal->timeopen;
+                                            } else {
+                                                $activitystartdates = $coursedetails->startdate;
+                                            }
+
+                                            if ($valuefinal->timeclose != 0) {
+                                                $activityenddatess = $valuefinal->timeclose;
+                                            } else {
+                                                if ($completionexpected != 0) {
+                                                    $activityenddatess = $completionexpected;
+                                                } else {
+                                                    $activityenddatess = $coursedetails->enddate;
+                                                }
+                                            }
+                                        } else {
+
+                                            $activitystartdates = $coursedetails->startdate;
+
+                                            if ($completionexpected != 0) {
+                                                $activityenddatess = $completionexpected;
+                                            } else {
+                                                $activityenddatess = $coursedetails->enddate;
+                                            }
+                                        }
+
+                                        $activityids = $DB->get_record(
+                                            'course_modules',
+
+                                            array('instance' => $instance, 'module' => $moduleid)
+                                        );
+
+                                        $alreadyenabled = $DB->get_record_sql("SELECT id FROM
 
                                                     {tool_leeloolxp_sync}
                                                     where activityid = ? and enabled = '1'
                                                     order by id desc limit 1", [$activityids->id]);
-                                            $sectiondataa = $DB->get_record_sql("SELECT section FROM {course_modules}
+                                        $sectiondataa = $DB->get_record_sql("SELECT section FROM {course_modules}
                                             WHERE id = ? ", [$activityids->id]);
 
-                                            $enabled = false;
+                                        $enabled = false;
 
-                                            if (!empty($alreadyenabled)) {
-                                                $enabled = true;
-                                            }
+                                        if (!empty($alreadyenabled)) {
+                                            $enabled = true;
+                                        }
 
-                                            echo '<tr><td>';
+                                        echo '<tr><td>';
 
-                                            if ($oldsectionsname != $sectionsdetails->name) {
-                                                echo $sectionsdetails->name . "-";
+                                        if ($oldsectionsname != $sectionsdetails->name) {
+                                            echo $sectionsdetails->name . "-";
 
-                                                echo $coursedetails->fullname;
-                                            }
+                                            echo $coursedetails->fullname;
+                                        }
 
-                                            echo '</td><td><div class="tqs-left">';
+                                        echo '</td><td><div class="tqs-left">';
 
-                                            $cm = $modinfo->cms[$activityids->id];
+                                        $cm = $modinfo->cms[$activityids->id];
 
-                                            if ($cm) {
-                                                if ($cm->modname == 'quiz') {
-                                                    $quizid = $cm->get_course_module_record()->instance;
-                                                    $quizdata = $DB->get_record('quiz', array('id' => $quizid), '*', MUST_EXIST);
+                                        if ($cm) {
+                                            if ($cm->modname == 'quiz') {
+                                                $quizid = $cm->get_course_module_record()->instance;
+                                                $quizdata = $DB->get_record('quiz', array('id' => $quizid), '*', MUST_EXIST);
 
-                                                    if (isset($quizdata->quiztype)) {
-                                                        if ($quizdata->quiztype == 'discover') {
-                                                            $iconurl = $CFG->wwwroot .
-                                                                '/local/leeloolxptrivias/pix/Discover_on.png';
-                                                        } else if ($quizdata->quiztype == 'exercises') {
-                                                            $iconurl = $CFG->wwwroot .
-                                                                '/local/leeloolxptrivias/pix/Studycase_on.png';
-                                                        } else if ($quizdata->quiztype == 'trivias') {
-                                                            $iconurl = $CFG->wwwroot . '/local/leeloolxptrivias/pix/Trivia_on.png';
-                                                        } else if ($quizdata->quiztype == 'assessments') {
-                                                            $iconurl = $CFG->wwwroot .
-                                                                '/local/leeloolxptrivias/pix/Assessments_on.png';
-                                                        } else if ($quizdata->quiztype == 'quest') {
-                                                            $iconurl = $CFG->wwwroot . '/local/leeloolxptrivias/pix/Quest_on.png';
-                                                        } else if ($quizdata->quiztype == 'mission') {
-                                                            $iconurl = $CFG->wwwroot . '/local/leeloolxptrivias/pix/Mission_on.png';
-                                                        } else if ($quizdata->quiztype == 'duels') {
-                                                            $iconurl = $CFG->wwwroot . '/local/leeloolxptrivias/pix/Duelos_on.png';
-                                                        } else {
-                                                            $iconurl = $cm->get_icon_url() . '?default';
-                                                        }
+                                                if (isset($quizdata->quiztype)) {
+                                                    if ($quizdata->quiztype == 'discover') {
+                                                        $iconurl = $CFG->wwwroot .
+                                                            '/local/leeloolxptrivias/pix/Discover_on.png';
+                                                    } else if ($quizdata->quiztype == 'exercises') {
+                                                        $iconurl = $CFG->wwwroot .
+                                                            '/local/leeloolxptrivias/pix/Studycase_on.png';
+                                                    } else if ($quizdata->quiztype == 'trivias') {
+                                                        $iconurl = $CFG->wwwroot . '/local/leeloolxptrivias/pix/Trivia_on.png';
+                                                    } else if ($quizdata->quiztype == 'assessments') {
+                                                        $iconurl = $CFG->wwwroot .
+                                                            '/local/leeloolxptrivias/pix/Assessments_on.png';
+                                                    } else if ($quizdata->quiztype == 'quest') {
+                                                        $iconurl = $CFG->wwwroot . '/local/leeloolxptrivias/pix/Quest_on.png';
+                                                    } else if ($quizdata->quiztype == 'mission') {
+                                                        $iconurl = $CFG->wwwroot . '/local/leeloolxptrivias/pix/Mission_on.png';
+                                                    } else if ($quizdata->quiztype == 'duels') {
+                                                        $iconurl = $CFG->wwwroot . '/local/leeloolxptrivias/pix/Duelos_on.png';
                                                     } else {
                                                         $iconurl = $cm->get_icon_url() . '?default';
                                                     }
                                                 } else {
-                                                    $iconurl = $cm->get_icon_url();
+                                                    $iconurl = $cm->get_icon_url() . '?default';
                                                 }
+                                            } else {
+                                                $iconurl = $cm->get_icon_url();
+                                            }
 
-                                                $icon = '<img src="' . $iconurl . '"
+                                            $icon = '<img src="' . $iconurl . '"
 
                                                         class="icon" alt="" />&nbsp;';
-                                            } else {
+                                        } else {
 
-                                                $icon = '<i class="fa fa-recycle"></i>';
+                                            $icon = '<i class="fa fa-recycle"></i>';
 
-                                                $iconurl = '';
-                                            }
+                                            $iconurl = '';
+                                        }
 
-                                            if (isset($valuefinal->quiztype)) {
-                                                $quiztype = $valuefinal->quiztype;
-                                            } else {
-                                                $quiztype = '';
-                                            }
+                                        if (isset($valuefinal->quiztype)) {
+                                            $quiztype = $valuefinal->quiztype;
+                                        } else {
+                                            $quiztype = '';
+                                        }
 
-                                            $difficulty = '1';
+                                        $difficulty = '1';
 
-                                            echo $icon;
+                                        echo $icon;
 
-                                            echo '<span>';
+                                        echo '<span>';
 
-                                            $oldsectionsname = $sectionsdetails->name;
+                                        $oldsectionsname = $sectionsdetails->name;
 
-                                            echo $valuefinal->name;
+                                        echo $valuefinal->name;
 
-                                            echo '</span></div></td><td>
+                                        echo '</span></div></td><td>
 
                                                     <div class="tqs-right">
 
                                                     <span class="tqs-span-';
 
-                                            if ($enabled) {
-                                                echo "yes";
+                                        if ($enabled) {
+                                            echo "yes";
+                                        } else {
+
+                                            echo "no";
+                                        }
+
+                                        echo '">';
+
+                                        if ($enabled) {
+                                            echo "Yes";
+                                        } else {
+
+                                            echo "No";
+                                        }
+
+                                        echo '</span><ul>';
+
+                                        $url = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+
+                                        if ($enabled) {
+                                            if (isset($reqredirect)) {
+                                                $redirect = '&redirect=courseview';
                                             } else {
 
-                                                echo "no";
+                                                $redirect = '';
                                             }
 
-                                            echo '">';
-
-                                            if ($enabled) {
-                                                echo "Yes";
-                                            } else {
-
-                                                echo "No";
-                                            }
-
-                                            echo '</span><ul>';
-
-                                            $url = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-
-                                            if ($enabled) {
-                                                if (isset($reqredirect)) {
-                                                    $redirect = '&redirect=courseview';
-                                                } else {
-
-                                                    $redirect = '';
-                                                }
-
-                                                echo '<li>
+                                            echo '<li>
                                                 <a href="' . $url . '?resync_activity=1&activity_id='
-                                                    . $activityids->id .
-                                                    '&activity_name='
-                                                    . $valuefinal->name .
-                                                    '&course_id='
-                                                    . $reqcourseid1 . $redirect . '">
+                                                . $activityids->id .
+                                                '&activity_name='
+                                                . $valuefinal->name .
+                                                '&course_id='
+                                                . $reqcourseid1 . $redirect . '">
                                                     ' . get_string('resync', 'tool_leeloolxp_sync') . '
                                                 </a>
                                                 </li>';
-                                            }
+                                        }
 
-                                            if ($enabled) {
-                                                echo '<li>
+                                        if ($enabled) {
+                                            echo '<li>
                                                     <a onclick="UnsyncActivity(' . $activityids->id . ')" href="#">'
-                                                    . get_string('unsync', 'tool_leeloolxp_sync') .
-                                                    '</a>
+                                                . get_string('unsync', 'tool_leeloolxp_sync') .
+                                                '</a>
                                                     </li>';
-                                            } else {
+                                        } else {
 
-                                                $querystring = $coursedetails->fullname . "$$" .
+                                            $querystring = $coursedetails->fullname . "$$" .
 
-                                                    $sectionsdetails->name . "$$" . $valuefinal->name . "$$" .
+                                                $sectionsdetails->name . "$$" . $valuefinal->name . "$$" .
 
-                                                    $activityids->id . "$$" . $courseid . "$$" .
+                                                $activityids->id . "$$" . $courseid . "$$" .
 
-                                                    $sectionsdetails->summary . "$$" .
+                                                $sectionsdetails->summary . "$$" .
 
-                                                    strip_tags($valuefinal->intro . "$$" .
-                                                        $activitystartdates . "$$" .
-                                                        $activityenddatess . "$$" . $tbl . "$$" . $iconurl
-                                                        . "$$" . $quiztype . "$$" . $difficulty)
-                                                    . "$$" .
+                                                strip_tags($valuefinal->intro . "$$" .
+                                                    $activitystartdates . "$$" .
+                                                    $activityenddatess . "$$" . $tbl . "$$" . $iconurl
+                                                    . "$$" . $quiztype . "$$" . $difficulty)
+                                                . "$$" .
 
-                                                    $sectiondataa->section;
+                                                $sectiondataa->section;
 
-                                                echo '<li><input class="all_activity_checkbox_single"
+                                            echo '<li><input class="all_activity_checkbox_single"
 
                                                         type="checkbox" name="all_activities[]"
 
                                                         value="' . str_replace(
-                                                    '"',
-                                                    '',
+                                                '"',
+                                                '',
 
-                                                    $querystring
-                                                ) . '"></li>';
-                                            }
+                                                $querystring
+                                            ) . '"></li>';
+                                        }
 
-                                            echo '</ul>';
+                                        echo '</ul>';
 
-                                            echo '</div></td>';
+                                        echo '</div></td>';
 
-                                            if (isset($valuefinal->questionsperpage)) {
-                                                $isquiz = $DB->get_record_sql(
-                                                    "SELECT id FROM {tool_leeloolxp_sync}
+                                        if (isset($valuefinal->questionsperpage)) {
+                                            $isquiz = $DB->get_record_sql(
+                                                "SELECT id FROM {tool_leeloolxp_sync}
                                                     where activityid =  ? and is_quiz = '1'
                                                     order by id desc limit 1",
-                                                    [$activityids->id]
-                                                );
+                                                [$activityids->id]
+                                            );
 
-                                                if (!empty($isquiz)) {
-                                                    $checked = true;
-                                                } else {
-
-                                                    $checked = false;
-                                                }
-
-                                                echo '<td style="text-align: center"><input type="checkbox"';
-
-                                                if ($checked) {
-                                                    echo "checked='checked'";
-                                                }
-
-                                                echo 'name="quiz_sync[]" class="quiz_sync_check"
-                                                value="' . $activityids->id . '"></td></tr>';
+                                            if (!empty($isquiz)) {
+                                                $checked = true;
                                             } else {
 
-                                                echo '<td></td></tr>';
+                                                $checked = false;
                                             }
+
+                                            echo '<td style="text-align: center"><input type="checkbox"';
+
+                                            if ($checked) {
+                                                echo "checked='checked'";
+                                            }
+
+                                            echo 'name="quiz_sync[]" class="quiz_sync_check"
+                                                value="' . $activityids->id . '"></td></tr>';
+                                        } else {
+
+                                            echo '<td></td></tr>';
                                         }
                                     }
                                 }
                             }
                         }
                     }
-                //}
+                }
             }
         }
     }
