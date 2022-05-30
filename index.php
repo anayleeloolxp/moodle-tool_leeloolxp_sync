@@ -521,7 +521,7 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
         left join {course_format_options} cfo ON ( cfo.sectionid = cs.id OR CAST(cfo.value as $dtype) = cs.section )
         WHERE course = ? and courseid = ?
         and ( cfo.name LIKE 'parent' OR cfo.name LIKE 'hiddensections' OR cfo.name LIKE 'coursedisplay')
-        AND cs.section != 0 GROUP BY cs.id,cfo.id ORDER BY cs.section ASC";
+        AND cs.section != 0 GROUP BY cs.id ORDER BY cs.section ASC";
 
         $coursehierarchy = $DB->get_records_sql($sql, [$courseidagain, $courseidagain]);
 
@@ -2037,7 +2037,7 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
         WHERE course = ? and courseid = ?
         and ( cfo.name LIKE 'parent' OR cfo.name LIKE 'hiddensections' OR cfo.name LIKE 'coursedisplay')
         AND cs.section != 0
-        GROUP BY cs.id,cfo.id ORDER BY cs.section ASC ";
+        GROUP BY cs.id ORDER BY cs.section ASC ";
 
         $coursehierarchy = $DB->get_records_sql($sql, [$courseidagain, $courseidagain]);
 
@@ -2955,7 +2955,7 @@ if (isset($reqaction)) {
                 if ($sectionsdetails->name == '' && $sectionsdetails->section != 0) {
                     $sectionsdetails->name = get_string('topic', 'tool_leeloolxp_sync') . $sectionsdetails->section;
                 }
-                if ($sectionsdetails->name != '' && $sectionsdetails->sequence != '') {
+                //if ($sectionsdetails->name != '' && $sectionsdetails->sequence != '') {
                     $sequence = $sectionsdetails->sequence;
 
                     $modulescourse = $DB->get_records_sql("select * from
@@ -3377,7 +3377,7 @@ if (isset($reqaction)) {
                             }
                         }
                     }
-                }
+                //}
             }
         }
     }
