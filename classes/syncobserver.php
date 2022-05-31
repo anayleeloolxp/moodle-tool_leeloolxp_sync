@@ -623,7 +623,7 @@ class syncobserver {
         );
         $output = $curl->post($url, $postdata, $options);
         $output = json_decode($output);
-        session_start();
+        @session_start();
         $_SESSION['gradehistoryid'] = $output->grade_history_id;
         $_SESSION['gradegradesid'] = $output->grade_grades_id;
         $_SESSION['coursecompleteid'] = $output->course_complete;
@@ -693,6 +693,7 @@ class syncobserver {
         $component = $eventdata['target'];
         $action = $eventdata['action'];
         $eventname = $eventdata['eventname'];
+        $gradecategory = '';
 
         if ($eventname == '\core\event\cohort_member_removed' || $eventname == '\core\event\cohort_member_added') {
 
