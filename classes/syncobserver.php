@@ -1350,50 +1350,52 @@ class syncobserver {
             $gradecategory = '';
         }
 
-        @session_start();
-        $gradehistoryid = $_SESSION['gradehistoryid'];
-        $gradegradesid = $_SESSION['gradegradesid'];
-        $coursecompleteid = $_SESSION['coursecompleteid'];
+        if (isset($USER->email) && isset($USER->email) != '') {
+            @session_start();
+            $gradehistoryid = $_SESSION['gradehistoryid'];
+            $gradegradesid = $_SESSION['gradegradesid'];
+            $coursecompleteid = $_SESSION['coursecompleteid'];
 
-        $sql = "SELECT gg.*,u.email,cm.id activity_id
+            $sql = "SELECT gg.*,u.email,cm.id activity_id
         FROM {grade_grades} gg left join {user} u on gg.userid = u.id
         left join  {grade_items} gi on gi.id = gg.itemid
         left join {modules} module on module.name = gi.itemmodule
         left join {course_modules} cm on cm.course = gi.courseid
         AND cm.module = module.id AND cm.instance = gi.iteminstance
         where gg.id > ? ";
-        $gradegradesdata = $DB->get_records_sql($sql, [$gradegradesid]);
+            $gradegradesdata = $DB->get_records_sql($sql, [$gradegradesid]);
 
-        $sql = "SELECT cc.*,u.email  FROM {course_completions} cc
+            $sql = "SELECT cc.*,u.email  FROM {course_completions} cc
         left join {user} u on cc.userid = u.id
         where cc.id > ? ";
-        $coursecompletedata = $DB->get_records_sql($sql, [$coursecompleteid]);
+            $coursecompletedata = $DB->get_records_sql($sql, [$coursecompleteid]);
 
-        $postdata = '&coursecompletedata=' . json_encode($coursecompletedata) .
-            '&gradegradesdata=' . json_encode($gradegradesdata) .
-            '&moodle_user_id=' . $userid . '&course_id=' . $courseid .
-            '&activity_id=' . $contextinstanceid . "&mod_name=" . $component .
-            "&user_email=" . base64_encode($USER->email) . "&action=" . $action .
-            '&detail=' . $alldetail .
-            '&event_name=' . $eventname . $grededata . $gredegradedatastring . $gradecategory;
+            $postdata = '&coursecompletedata=' . json_encode($coursecompletedata) .
+                '&gradegradesdata=' . json_encode($gradegradesdata) .
+                '&moodle_user_id=' . $userid . '&course_id=' . $courseid .
+                '&activity_id=' . $contextinstanceid . "&mod_name=" . $component .
+                "&user_email=" . base64_encode($USER->email) . "&action=" . $action .
+                '&detail=' . $alldetail .
+                '&event_name=' . $eventname . $grededata . $gredegradedatastring . $gradecategory;
 
-        $url = $teamniourl . '/admin/sync_moodle_course/update_viewed_log';
-        $curl = new curl;
-        $options = array(
-            'CURLOPT_RETURNTRANSFER' => true,
-            'CURLOPT_HEADER' => false,
-            'CURLOPT_POST' => 1,
-            'CURLOPT_HTTPHEADER' => array(
-                'Leeloolxptoken: ' . get_config('local_leeloolxpapi')->leelooapitoken . ''
-            )
-        );
-        $output = $curl->post($url, $postdata, $options);
+            $url = $teamniourl . '/admin/sync_moodle_course/update_viewed_log';
+            $curl = new curl;
+            $options = array(
+                'CURLOPT_RETURNTRANSFER' => true,
+                'CURLOPT_HEADER' => false,
+                'CURLOPT_POST' => 1,
+                'CURLOPT_HTTPHEADER' => array(
+                    'Leeloolxptoken: ' . get_config('local_leeloolxpapi')->leelooapitoken . ''
+                )
+            );
+            $output = $curl->post($url, $postdata, $options);
 
-        if (!empty($output)) {
-            $outputarr = explode('&', $output);
-            $_SESSION['gradegradesid'] = $outputarr[0];
-            $_SESSION['gradehistoryid'] = $outputarr[1];
-            $_SESSION['coursecompleteid'] = $outputarr[2];
+            if (!empty($output)) {
+                $outputarr = explode('&', $output);
+                $_SESSION['gradegradesid'] = $outputarr[0];
+                $_SESSION['gradehistoryid'] = $outputarr[1];
+                $_SESSION['coursecompleteid'] = $outputarr[2];
+            }
         }
     }
 }
