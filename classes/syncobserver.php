@@ -1352,9 +1352,9 @@ class syncobserver {
 
         if (isset($USER->email) && isset($USER->email) != '') {
             @session_start();
-            $gradehistoryid = $_SESSION['gradehistoryid'];
-            $gradegradesid = $_SESSION['gradegradesid'];
-            $coursecompleteid = $_SESSION['coursecompleteid'];
+            @$gradehistoryid = $_SESSION['gradehistoryid'];
+            @$gradegradesid = $_SESSION['gradegradesid'];
+            @$coursecompleteid = $_SESSION['coursecompleteid'];
 
             $sql = "SELECT gg.*,u.email,cm.id activity_id
         FROM {grade_grades} gg left join {user} u on gg.userid = u.id
