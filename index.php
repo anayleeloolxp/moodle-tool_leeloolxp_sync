@@ -489,6 +489,8 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
 
     $useridscohort = '';
 
+    $cohortname = '';
+
     foreach ($alldata as $key => $value) {
         $activityidmoodlearr = array();
 
@@ -1023,8 +1025,6 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
             FROM {cohort_members}
             left join {cohort} on {cohort}.id={cohort_members}.cohortid
             WHERE userid IN ($useridscohort) ");
-
-            $cohortname = '';
 
             if (!empty($cohortdata)) {
                 foreach ($cohortdata as $key => $value) {
@@ -2016,6 +2016,8 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
 
     $useridscohort = '';
 
+    $cohortname = '';
+
     foreach ($alldata as $key => $value) {
         $activityidmoodlearr = array();
 
@@ -2557,8 +2559,6 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
             FROM {cohort_members}
             left join {cohort} on {cohort}.id={cohort_members}.cohortid
             WHERE userid IN ($useridscohort) ");
-
-            $cohortname = '';
 
             if (!empty($cohortdata)) {
                 foreach ($cohortdata as $key => $value) {
