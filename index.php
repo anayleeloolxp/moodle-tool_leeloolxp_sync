@@ -2979,8 +2979,6 @@ if (isset($reqaction)) {
                     $sectionsdetails->name = get_string('topic', 'tool_leeloolxp_sync') . $sectionsdetails->section;
                 }
 
-                // If($sectionsdetails->name != '' && $sectionsdetails->sequence != '').
-
                 $sequence = $sectionsdetails->sequence;
 
                 $modulescourse = $DB->get_records_sql("select * from
