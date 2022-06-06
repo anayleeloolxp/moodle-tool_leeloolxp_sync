@@ -380,6 +380,10 @@ class syncobserver {
 
         'degree' and {user_info_data}.userid = ?", [$user->id]);
 
+        $enrolmentdatauser = $DB->get_record_sql("SELECT enrol  FROM {enrol}
+        left join {user_enrolments} on {enrol}.id = {user_enrolments}.enrolid
+        where {user_enrolments}.id =  ?", [$snapshotid]);
+
         $userdegreename = @$userdegree->data;
 
         $userdepartment = $user->department;
@@ -570,6 +574,7 @@ class syncobserver {
             'alternate_name' => $alternatename,
             'web_page' => $webpage,
             'rolename' => $rolename,
+            'enrolment_method' => $enrolmentdatauser->enrol,
         );
 
         $url = $teamniourl . '/admin/sync_moodle_course/enrolment_newuser';
