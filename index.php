@@ -2969,7 +2969,7 @@ if (isset($reqaction)) {
 
         $table = 'course_sections';
 
-        $sections = $DB->get_records($table, array('course' => $courseid));
+        $sections = $DB->get_records($table, array('course' => $courseid), 'section ASC');
 
         $courseaction = get_course($courseid);
 
