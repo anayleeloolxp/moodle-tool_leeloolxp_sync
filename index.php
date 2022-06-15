@@ -2733,45 +2733,77 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
         $i++;
     }
 
-    if (isset($reqquizsync)) {
-        foreach ($reqquizsync as $key => $value) {
-            $DB->execute("Update {tool_leeloolxp_sync}  set is_quiz = '1'
-
-            where activityid = ?", [$value]);
-
-            $isqpost = [
-
-                'activity_id' => $value,
-
-            ];
-
-            $url = $teamniourl . '/admin/sync_moodle_course/is_quiz_update';
-
-            $curl = new curl;
-
-            $options = array(
-
-                'CURLOPT_RETURNTRANSFER' => true,
-
-                'CURLOPT_HEADER' => false,
-
-                'CURLOPT_POST' => count($isqpost),
-                'CURLOPT_HTTPHEADER' => array(
-                    'Leeloolxptoken: ' . get_config('local_leeloolxpapi')->leelooapitoken . ''
-                )
-            );
-
-            if (!$response = $curl->post($url, $isqpost, $options)) {
-                return true;
-            }
-        }
-    }
-
     if (isset($reqredirecthidden)) {
         if ($reqredirecthidden == 'courseview') {
             $urltogo = $CFG->wwwroot . '/course/view.php?id=' . $courseidagain . '&sync=1';
 
             redirect($urltogo);
+        }
+    }
+}
+
+if (isset($reqcourseid1) && !empty($reqcourseid1)) {
+    $DB->execute("Update {tool_leeloolxp_sync}  set is_quiz = '0'
+
+    where courseid = ?", [$reqcourseid1]);
+
+    $isqpost = [
+
+        'courseid' => $reqcourseid1,
+
+    ];
+
+    $url = $teamniourl . '/admin/sync_moodle_course/is_quiz_update_by_course';
+
+    $curl = new curl;
+
+    $options = array(
+
+        'CURLOPT_RETURNTRANSFER' => true,
+
+        'CURLOPT_HEADER' => false,
+
+        'CURLOPT_POST' => count($isqpost),
+        'CURLOPT_HTTPHEADER' => array(
+            'Leeloolxptoken: ' . get_config('local_leeloolxpapi')->leelooapitoken . ''
+        )
+    );
+
+    if (!$response = $curl->post($url, $isqpost, $options)) {
+        return true;
+    }
+}
+
+if (isset($reqquizsync)) {
+    foreach ($reqquizsync as $key => $value) {
+        $DB->execute("Update {tool_leeloolxp_sync}  set is_quiz = '1'
+
+        where activityid = ?", [$value]);
+
+        $isqpost = [
+
+            'activity_id' => $value,
+
+        ];
+
+        $url = $teamniourl . '/admin/sync_moodle_course/is_quiz_update';
+
+        $curl = new curl;
+
+        $options = array(
+
+            'CURLOPT_RETURNTRANSFER' => true,
+
+            'CURLOPT_HEADER' => false,
+
+            'CURLOPT_POST' => count($isqpost),
+            'CURLOPT_HTTPHEADER' => array(
+                'Leeloolxptoken: ' . get_config('local_leeloolxpapi')->leelooapitoken . ''
+            )
+        );
+
+        if (!$response = $curl->post($url, $isqpost, $options)) {
+            return true;
         }
     }
 }
