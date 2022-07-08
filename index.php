@@ -461,7 +461,7 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
                                         )
                                         . "$$" .
 
-                                        $sectiondataa->section . "$$" . json_encode($moduledetail);
+                                        $sectiondataa->section . "$$" . base64_encode(json_encode($moduledetail));
 
                                     $alldata[] = $querystring;
 
@@ -3393,7 +3393,7 @@ if (isset($reqaction)) {
                                                     . "$$" . $quiztype . "$$" . $difficulty)
                                                 . "$$" .
 
-                                                $sectiondataa->section . "$$" . json_encode($moduledetail);
+                                                $sectiondataa->section . "$$" . base64_encode(json_encode($moduledetail));
 
                                             echo '<li><input class="all_activity_checkbox_single"
 
