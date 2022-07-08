@@ -461,7 +461,7 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
                                         )
                                         . "$$" .
 
-                                        $sectiondataa->section;
+                                        $sectiondataa->section . "$$" . json_encode($moduledetail);
 
                                     $alldata[] = $querystring;
 
@@ -515,6 +515,8 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
         $quiztypesync = $activityidarr[11];
 
         $quizdiffsync = $activityidarr[12];
+
+        $arfulldata = $activityidarr[14];
 
         if ($CFG->dbtype == 'mysqli') {
 
@@ -1124,6 +1126,8 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
             'quiztype' => $quiztypesync,
 
             'quizdiff' => $quizdiffsync,
+
+            'arfulldata' => $arfulldata,
 
             'showdescription' => $modulegeneraldata->showdescription,
 
@@ -2043,6 +2047,8 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
 
         $quizdiffsync = $activityidarr[12];
 
+        $arfulldata = $activityidarr[14];
+
         if ($CFG->dbtype == 'mysqli') {
 
             $sql = "SELECT cs.id cid , cs.name cname , cs.section csection , cs.sequence csequence, cfo.*,
@@ -2654,6 +2660,8 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
             'quiztype' => $quiztypesync,
 
             'quizdiff' => $quizdiffsync,
+
+            'arfulldata' => $arfulldata,
 
             'showdescription' => $modulegeneraldata->showdescription,
 
@@ -3385,7 +3393,7 @@ if (isset($reqaction)) {
                                                     . "$$" . $quiztype . "$$" . $difficulty)
                                                 . "$$" .
 
-                                                $sectiondataa->section;
+                                                $sectiondataa->section . "$$" . json_encode($moduledetail);
 
                                             echo '<li><input class="all_activity_checkbox_single"
 
