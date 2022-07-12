@@ -181,6 +181,9 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
 
                     $completionexpected = $coursemoduledetails->completionexpected;
 
+                    $completionview = $coursemoduledetails->completionview;
+                    $completiongradeitemnumber = $coursemoduledetails->completiongradeitemnumber;
+
                     $modules = $DB->get_records("modules", array('id' => $moduleid));
 
                     if (!empty($modules)) {
@@ -1144,6 +1147,10 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
 
             'completionexpected' => $modulegeneraldata->completionexpected,
 
+            'completionview' => $modulegeneraldata->completionview,
+
+            'completiongradeitemnumber' => $modulegeneraldata->completiongradeitemnumber,
+
             'availability' => $modulegeneraldata->availability,
 
             'groupmode' => $modulegeneraldata->groupmode,
@@ -1302,6 +1309,10 @@ if (isset($reqresyncactivity)) {
                         $instance = $coursemoduledetails->instance;
 
                         $completionexpected = $coursemoduledetails->completionexpected;
+
+                        $completionview = $coursemoduledetails->completionview;
+
+                        $completiongradeitemnumber = $coursemoduledetails->completiongradeitemnumber;
 
                         $modules = $DB->get_records("modules", array('id' => $moduleid)); // Fetch modules for real table name.
 
@@ -1559,6 +1570,10 @@ if (isset($reqresyncactivity)) {
 
         'completionexpected' => $modulegeneraldata->completionexpected,
 
+        'completionview' => $modulegeneraldata->completionview,
+
+        'completiongradeitemnumber' => $modulegeneraldata->completiongradeitemnumber,
+
         'availability' => $modulegeneraldata->availability,
 
         'groupmode' => $modulegeneraldata->groupmode,
@@ -1638,6 +1653,10 @@ if (isset($reqresync)) {
                         $instance = $coursemoduledetails->instance;
 
                         $completionexpected = $coursemoduledetails->completionexpected;
+
+                        $completionview = $coursemoduledetails->completionview;
+
+                        $completiongradeitemnumber = $coursemoduledetails->completiongradeitemnumber;
 
                         $modules = $DB->get_records("modules", array('id' => $moduleid));
 
@@ -1876,6 +1895,10 @@ if (isset($reqresync)) {
                                                 'completion' => $modulegeneraldata->completion,
 
                                                 'completionexpected' => $modulegeneraldata->completionexpected,
+
+                                                'completionview' => $modulegeneraldata->completionview,
+
+                                                'completiongradeitemnumber' => $modulegeneraldata->completiongradeitemnumber,
 
                                                 'availability' => $modulegeneraldata->availability,
 
@@ -2678,6 +2701,10 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
 
             'completionexpected' => $modulegeneraldata->completionexpected,
 
+            'completionview' => $modulegeneraldata->completionview,
+
+            'completiongradeitemnumber' => $modulegeneraldata->completiongradeitemnumber,
+
             'availability' => $modulegeneraldata->availability,
 
             'groupmode' => $modulegeneraldata->groupmode,
@@ -3041,6 +3068,10 @@ if (isset($reqaction)) {
                         $instance = $coursemoduledetails->instance;
 
                         $completionexpected = $coursemoduledetails->completionexpected;
+
+                        $completionview = $coursemoduledetails->completionview;
+
+                        $completiongradeitemnumber = $coursemoduledetails->completiongradeitemnumber;
 
                         $modules = $DB->get_records("modules", array('id' => $moduleid));
 
