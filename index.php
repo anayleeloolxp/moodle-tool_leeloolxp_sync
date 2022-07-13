@@ -1101,6 +1101,8 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
 
             'project_description' => $coursedetailsagain->summary,
 
+            'course_format' => $coursedetailsagain->format,
+
             'subproject_description' => $secctiondescription,
 
             'task_description' => $activitydescription,
@@ -1930,6 +1932,8 @@ if (isset($reqresync)) {
 
         'project_description' => $projectdescription,
 
+        'course_format' => $coursedetails->format,
+
         'end_date' => $coursedetails->enddate,
 
         'visible' => $coursedetails->visible,
@@ -2654,6 +2658,8 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
             'group_name' => $groupname,
 
             'project_description' => $coursedetailsagain->summary,
+
+            'course_format' => $coursedetailsagain->format,
 
             'subproject_description' => $secctiondescription,
 
