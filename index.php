@@ -162,7 +162,7 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
 
     if (!empty($sections)) {
         foreach ($sections as $sectionkey => $sectionsdetails) {
-            if ($sectionsdetails->name == '' && $sectionsdetails->section != 0) {
+            if ($sectionsdetails->name == '') {
                 $sectionsdetails->name = get_string('topic', 'tool_leeloolxp_sync') . $sectionsdetails->section;
             }
 
@@ -532,7 +532,7 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
             (Select id from mdlwf_course_sections where course = ? and section = cfo.value) as parentsectionid
             FROM mdlwf_course_sections as cs left join mdlwf_course_format_options as cfo
             on cfo.sectionid = cs.id and cfo.name = 'parent' WHERE cs.course = ?
-            AND cs.section != 0 GROUP BY cs.id ORDER BY csection ASC";
+            GROUP BY cs.id ORDER BY csection ASC";
 
             // AND ( cfo.name LIKE 'parent' OR cfo.name LIKE 'hiddensections' OR cfo.name LIKE 'coursedisplay').
             $coursehierarchy = $DB->get_records_sql($sql, [$courseidagain, $courseidagain]);
@@ -543,8 +543,7 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
             (Select id from {course_sections} where course = ? and section = CAST(cfo.value as INT)) as parentsectionid
             from   {course_sections}  cs
             left join {course_format_options} cfo ON cfo.sectionid = cs.id and cfo.name = 'parent'
-            WHERE course = ? and
-            cs.section != 0  ORDER BY cs.id ASC";
+            WHERE course = ? ORDER BY cs.id ASC";
             $coursehierarchy = $DB->get_records_sql($sql, [$courseidagain, $courseidagain]);
             if (!empty($coursehierarchy)) {
                 usort($coursehierarchy, function ($a, $b) {
@@ -557,7 +556,7 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
 
             $sql = "SELECT id cid,name cname,section csection ,sequence csequence,id sectionid
             FROM {course_sections} cs
-            WHERE course = ? AND section != 0 AND section != '0'";
+            WHERE course = ?";
 
             $coursehierarchy = $DB->get_records_sql($sql, [$courseidagain]);
         }
@@ -1642,7 +1641,7 @@ if (isset($reqresync)) {
 
     if (!empty($sections)) {
         foreach ($sections as $sectionkey => $sectionsdetails) {
-            if ($sectionsdetails->name == '' && $sectionsdetails->section != 0) {
+            if ($sectionsdetails->name == '') {
                 $sectionsdetails->name = get_string('topic', 'tool_leeloolxp_sync') . $sectionsdetails->section;
             }
             if ($sectionsdetails->name != '' && $sectionsdetails->sequence != '') {
@@ -2087,7 +2086,7 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
             (Select id from mdlwf_course_sections where course = ? and section = cfo.value) as parentsectionid
             FROM mdlwf_course_sections as cs left join mdlwf_course_format_options as cfo
             on cfo.sectionid = cs.id and cfo.name = 'parent' WHERE cs.course = ?
-            AND cs.section != 0 GROUP BY cs.id ORDER BY csection ASC";
+            GROUP BY cs.id ORDER BY csection ASC";
 
             // AND ( cfo.name LIKE 'parent' OR cfo.name LIKE 'hiddensections' OR cfo.name LIKE 'coursedisplay').
             $coursehierarchy = $DB->get_records_sql($sql, [$courseidagain, $courseidagain]);
@@ -2098,8 +2097,7 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
             (Select id from {course_sections} where course = ? and section = CAST(cfo.value as INT)) as parentsectionid
             from   {course_sections}  cs
             left join {course_format_options} cfo ON cfo.sectionid = cs.id and cfo.name = 'parent'
-            WHERE course = ? and
-            cs.section != 0  ORDER BY cs.id ASC";
+            WHERE course = ? ORDER BY cs.id ASC";
             $coursehierarchy = $DB->get_records_sql($sql, [$courseidagain, $courseidagain]);
             if (!empty($coursehierarchy)) {
                 usort($coursehierarchy, function ($a, $b) {
@@ -2112,7 +2110,7 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
 
             $sql = "SELECT id cid,name cname,section csection ,sequence csequence,id sectionid
             FROM {course_sections} cs
-            WHERE course = ? AND section != 0 AND section != '0'   ";
+            WHERE course = ?";
 
             $coursehierarchy = $DB->get_records_sql($sql, [$courseidagain]);
         }
@@ -3057,7 +3055,7 @@ if (isset($reqaction)) {
 
         if (!empty($sections)) {
             foreach ($sections as $sectionkey => $sectionsdetails) {
-                if ($sectionsdetails->name == '' && $sectionsdetails->section != 0) {
+                if ($sectionsdetails->name == '') {
                     $sectionsdetails->name = get_string('topic', 'tool_leeloolxp_sync') . $sectionsdetails->section;
                 }
 
