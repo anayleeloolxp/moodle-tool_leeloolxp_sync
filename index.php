@@ -529,8 +529,8 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
         if ($CFG->dbtype == 'mysqli') {
 
             $sql = "SELECT cs.id cid , cs.name cname , cs.section csection , cs.sequence csequence, cfo.*,
-            (Select id from mdlwf_course_sections where course = ? and section = cfo.value) as parentsectionid
-            FROM mdlwf_course_sections as cs left join mdlwf_course_format_options as cfo
+            (Select id from {course_sections} where course = ? and section = cfo.value) as parentsectionid
+            FROM {course_sections} as cs left join {course_format_options} as cfo
             on cfo.sectionid = cs.id and cfo.name = 'parent' WHERE cs.course = ?
             GROUP BY cs.id ORDER BY csection ASC";
 
@@ -2083,8 +2083,8 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
         if ($CFG->dbtype == 'mysqli') {
 
             $sql = "SELECT cs.id cid , cs.name cname , cs.section csection , cs.sequence csequence, cfo.*,
-            (Select id from mdlwf_course_sections where course = ? and section = cfo.value) as parentsectionid
-            FROM mdlwf_course_sections as cs left join mdlwf_course_format_options as cfo
+            (Select id from {course_sections} where course = ? and section = cfo.value) as parentsectionid
+            FROM {course_sections} as cs left join {course_format_options} as cfo
             on cfo.sectionid = cs.id and cfo.name = 'parent' WHERE cs.course = ?
             GROUP BY cs.id ORDER BY csection ASC";
 
