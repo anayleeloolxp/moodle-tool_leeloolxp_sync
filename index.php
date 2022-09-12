@@ -530,7 +530,7 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
 
             $sql = "SELECT cs.id cid , cs.name cname , cs.section csection , cs.sequence csequence, cfo.*,
             (Select id from {course_sections} where course = ? and section = cfo.value) as parentsectionid
-            FROM {course_sections} as cs left join {course_format_options} as cfo
+            FROM {course_sections} cs left join {course_format_options} cfo
             on cfo.sectionid = cs.id and cfo.name = 'parent' WHERE cs.course = ?
             GROUP BY cs.id ORDER BY csection ASC";
 
@@ -2084,7 +2084,7 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
 
             $sql = "SELECT cs.id cid , cs.name cname , cs.section csection , cs.sequence csequence, cfo.*,
             (Select id from {course_sections} where course = ? and section = cfo.value) as parentsectionid
-            FROM {course_sections} as cs left join {course_format_options} as cfo
+            FROM {course_sections} cs left join {course_format_options} cfo
             on cfo.sectionid = cs.id and cfo.name = 'parent' WHERE cs.course = ?
             GROUP BY cs.id ORDER BY csection ASC";
 
