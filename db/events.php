@@ -391,6 +391,11 @@ $observers = array(
     ),
 
     array(
+        'eventname' => '\mod_leeloolxpcert\event\course_module_viewed',
+        'callback' => '\tool_leeloolxp_sync\syncobserver::badge_createdd',
+    ),
+
+    array(
         'eventname' => '\mod_data\event\course_module_viewed',
         'callback' => '\tool_leeloolxp_sync\syncobserver::badge_createdd',
     ),
