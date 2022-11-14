@@ -2871,10 +2871,20 @@ if (!empty($error)) {
 if (!isset($reqaction)) {
     echo '<div id="accordion">';
 
-    $categories = $DB->get_records('course_categories', array());
+    $categories = $DB->get_records('course_categories', array(), 'sortorder ASC');
 
     if (!empty($categories)) {
         foreach ($categories as $key => $catvalue) {
+            $dashes = '';
+            $stylepadding = 0;
+            if ($catvalue->depth > 1) {
+
+                for ($i = 1; $i < $catvalue->depth; $i++) {
+                    $dashes .= ' - ';
+                    $stylepadding += 10;
+                }
+            }
+            $stylepadding = 'style="padding: 0px ' . $stylepadding . 'px;"';
             echo '<div class="card">
 
             <div class="card-header" id="heading' . $catvalue->id . '">
@@ -2893,7 +2903,7 @@ if (!isset($reqaction)) {
 
                             aria-expanded="false" aria-controls="collapse
 
-                            ' . $catvalue->id . '">' . $catvalue->name . '</button>
+                            ' . $catvalue->id . '" ' . $stylepadding . '>' . $dashes . $catvalue->name . '</button>
 
                         </td>
 
