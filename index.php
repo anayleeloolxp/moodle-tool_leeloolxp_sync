@@ -391,7 +391,7 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
 
                                         {tool_leeloolxp_sync}
 
-                                        where activityid = ? and enabled = ? limit ?", [$activityids->id, 1, 1]);
+                                        where activityid = ? and enabled = '1' limit 1", [$activityids->id]);
 
                                     $enabled = false;
                                     $sectiondataa = $DB->get_record_sql("SELECT section FROM {course_modules}
@@ -1049,7 +1049,7 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
 
         $groupname = '';
 
-        $categorydata = $DB->get_records_sql("SELECT * FROM {course_categories} WHERE id = ?", [$coursedetailsagain->category]);
+        $categorydata = $DB->get_records_sql("SELECT * FROM {course_categories}");
 
         $gradecategories = $DB->get_records_sql("SELECT *
         FROM {grade_categories}
@@ -1108,7 +1108,9 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
 
             'course_id' => $coursedetailsagain->id,
 
-            'idnumber' => $coursedetailsagain->idnumber,
+            'syncidnumber' => $coursedetailsagain->idnumber,
+
+            'course_category' => $coursedetailsagain->category,
 
             'shortname' => $coursedetailsagain->shortname,
 
@@ -1917,7 +1919,7 @@ if (isset($reqresync)) {
         }
     }
 
-    $categorydata = $DB->get_records_sql("SELECT * FROM {course_categories} WHERE id = ?", [$coursedetails->category]);
+    $categorydata = $DB->get_records_sql("SELECT * FROM {course_categories}");
 
     $post = [
 
@@ -1936,6 +1938,8 @@ if (isset($reqresync)) {
         'end_date' => $coursedetails->enddate,
 
         'visible' => $coursedetails->visible,
+
+        'course_category' => $coursedetails->category,
 
         'moodle_course_id' => $idnumber,
 
@@ -2609,7 +2613,7 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
         }
 
         $groupname = '';
-        $categorydata = $DB->get_records_sql("SELECT * FROM {course_categories} WHERE id = ?", [$coursedetailsagain->category]);
+        $categorydata = $DB->get_records_sql("SELECT * FROM {course_categories}");
 
         $gradecategories = $DB->get_records_sql("SELECT * FROM {grade_categories}
         WHERE courseid = ?
@@ -2665,7 +2669,9 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
 
             'course_id' => $coursedetailsagain->id,
 
-            'idnumber' => $coursedetailsagain->idnumber,
+            'syncidnumber' => $coursedetailsagain->idnumber,
+
+            'course_category' => $coursedetailsagain->category,
 
             'shortname' => $coursedetailsagain->shortname,
 
