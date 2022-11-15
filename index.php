@@ -2864,6 +2864,18 @@ if ($msg != '') {
     echo "<p style='color:green;'>" . $msg . "</p>";
 }
 
+$lang = current_language();
+if ($lang) {
+    $scss = '<style>span.multilang {
+        display: none;
+    }
+    span.multilang[lang="' . $lang . '"] {
+        display: inline;
+    }</style>';
+}
+
+echo $scss;
+
 if (!empty($error)) {
     echo $OUTPUT->container($error, 'leeloolxp_sync_myformerror');
 }
