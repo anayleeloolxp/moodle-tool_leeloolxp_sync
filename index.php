@@ -1118,7 +1118,7 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
 
             'category' => $coursedetailsagain->category,
 
-            'visible' => $coursedetailsagain->visible,
+            'course_visible' => $coursedetailsagain->visible,
 
             'cat_data' => json_encode($categorydata),
 
@@ -2679,7 +2679,7 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
 
             'category' => $coursedetailsagain->category,
 
-            'visible' => $coursedetailsagain->visible,
+            'course_visible' => $coursedetailsagain->visible,
 
             'cat_data' => json_encode($categorydata),
 
