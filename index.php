@@ -3094,7 +3094,20 @@ if (isset($reqaction)) {
                             {course_modules} where section = ? ORDER BY ID", [$sectionsdetails->id]);
 
                 if (!empty($modulescourse)) {
-                    foreach ($modulescourse as $coursemoduledetails) {
+
+                    $sequencearr = explode(',', $sequence);
+
+                    $newcoursemoduledda = [];
+
+                    foreach ($sequencearr as $tempidval) {
+
+                        if (!empty($modulescourse[$tempidval])) {
+
+                            $newcoursemoduledda[$tempidval] = $modulescourse[$tempidval];
+                        }
+                    }
+
+                    foreach ($newcoursemoduledda as $coursemoduledetails) {
                         $moduleid = $coursemoduledetails->module;
 
                         $instance = $coursemoduledetails->instance;
