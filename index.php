@@ -531,7 +531,7 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
             $sql = "SELECT cs.id cid , cs.name cname , cs.section csection , cs.sequence csequence, cfo.*,
             (Select id from {course_sections} where course = ? and section = cfo.value) as parentsectionid
             FROM {course_sections} cs left join {course_format_options} cfo
-            on cfo.sectionid = cs.id and cfo.name = 'parent' WHERE cs.course = ?
+            on cfo.sectionid = cs.id and cfo.name = 'parent' WHERE cs.course = ? and cs.section != '0'
             GROUP BY cs.id ORDER BY csection ASC";
 
             // AND ( cfo.name LIKE 'parent' OR cfo.name LIKE 'hiddensections' OR cfo.name LIKE 'coursedisplay').
@@ -543,7 +543,7 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
             (Select id from {course_sections} where course = ? and section = CAST(cfo.value as INT)) as parentsectionid
             from   {course_sections}  cs
             left join {course_format_options} cfo ON cfo.sectionid = cs.id and cfo.name = 'parent'
-            WHERE course = ? ORDER BY cs.id ASC";
+            WHERE course = ? and cs.section != '0' ORDER BY cs.id ASC";
             $coursehierarchy = $DB->get_records_sql($sql, [$courseidagain, $courseidagain]);
             if (!empty($coursehierarchy)) {
                 usort($coursehierarchy, function ($a, $b) {
@@ -556,7 +556,7 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
 
             $sql = "SELECT id cid,name cname,section csection ,sequence csequence,id sectionid
             FROM {course_sections} cs
-            WHERE course = ?";
+            WHERE course = ? and cs.section != '0' ";
 
             $coursehierarchy = $DB->get_records_sql($sql, [$courseidagain]);
         }
@@ -2089,7 +2089,7 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
             $sql = "SELECT cs.id cid , cs.name cname , cs.section csection , cs.sequence csequence, cfo.*,
             (Select id from {course_sections} where course = ? and section = cfo.value) as parentsectionid
             FROM {course_sections} cs left join {course_format_options} cfo
-            on cfo.sectionid = cs.id and cfo.name = 'parent' WHERE cs.course = ?
+            on cfo.sectionid = cs.id and cfo.name = 'parent' WHERE cs.course = ? and cs.section != '0'
             GROUP BY cs.id ORDER BY csection ASC";
 
             // AND ( cfo.name LIKE 'parent' OR cfo.name LIKE 'hiddensections' OR cfo.name LIKE 'coursedisplay').
@@ -2101,7 +2101,7 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
             (Select id from {course_sections} where course = ? and section = CAST(cfo.value as INT)) as parentsectionid
             from   {course_sections}  cs
             left join {course_format_options} cfo ON cfo.sectionid = cs.id and cfo.name = 'parent'
-            WHERE course = ? ORDER BY cs.id ASC";
+            WHERE course = ? and cs.section != '0' ORDER BY cs.id ASC";
             $coursehierarchy = $DB->get_records_sql($sql, [$courseidagain, $courseidagain]);
             if (!empty($coursehierarchy)) {
                 usort($coursehierarchy, function ($a, $b) {
@@ -2114,7 +2114,7 @@ if (isset($reqsyncactivities) && isset($reqallactivities)) {
 
             $sql = "SELECT id cid,name cname,section csection ,sequence csequence,id sectionid
             FROM {course_sections} cs
-            WHERE course = ?";
+            WHERE course = ? and cs.section != '0' ";
 
             $coursehierarchy = $DB->get_records_sql($sql, [$courseidagain]);
         }
