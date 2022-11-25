@@ -410,23 +410,7 @@ if (isset($reqaction) && $reqaction == 'coursesyncfrmblock') {
                                             $quizdata = $DB->get_record('quiz', array('id' => $quizid), '*', MUST_EXIST);
 
                                             if (isset($quizdata->quiztype)) {
-                                                if ($quizdata->quiztype == 'discover') {
-                                                    $iconurl = $CFG->wwwroot . '/local/leeloolxptrivias/pix/Discover_on.png';
-                                                } else if ($quizdata->quiztype == 'exercises') {
-                                                    $iconurl = $CFG->wwwroot . '/local/leeloolxptrivias/pix/Studycase_on.png';
-                                                } else if ($quizdata->quiztype == 'trivias') {
-                                                    $iconurl = $CFG->wwwroot . '/local/leeloolxptrivias/pix/Trivia_on.png';
-                                                } else if ($quizdata->quiztype == 'assessments') {
-                                                    $iconurl = $CFG->wwwroot . '/local/leeloolxptrivias/pix/Assessments_on.png';
-                                                } else if ($quizdata->quiztype == 'quest') {
-                                                    $iconurl = $CFG->wwwroot . '/local/leeloolxptrivias/pix/Quest_on.png';
-                                                } else if ($quizdata->quiztype == 'mission') {
-                                                    $iconurl = $CFG->wwwroot . '/local/leeloolxptrivias/pix/Mission_on.png';
-                                                } else if ($quizdata->quiztype == 'duels') {
-                                                    $iconurl = $CFG->wwwroot . '/local/leeloolxptrivias/pix/Duelos_on.png';
-                                                } else {
-                                                    $iconurl = $cm->get_icon_url() . '?default';
-                                                }
+                                                $iconurl = $CFG->wwwroot . '/local/leeloolxptrivias/pix/' . $quizdata->quiztype . '.png';
                                             } else {
                                                 $iconurl = $cm->get_icon_url() . '?default';
                                             }
@@ -3353,26 +3337,7 @@ if (isset($reqaction)) {
                                                 $quizdata = $DB->get_record('quiz', array('id' => $quizid), '*', MUST_EXIST);
 
                                                 if (isset($quizdata->quiztype)) {
-                                                    if ($quizdata->quiztype == 'discover') {
-                                                        $iconurl = $CFG->wwwroot .
-                                                            '/local/leeloolxptrivias/pix/Discover_on.png';
-                                                    } else if ($quizdata->quiztype == 'exercises') {
-                                                        $iconurl = $CFG->wwwroot .
-                                                            '/local/leeloolxptrivias/pix/Studycase_on.png';
-                                                    } else if ($quizdata->quiztype == 'trivias') {
-                                                        $iconurl = $CFG->wwwroot . '/local/leeloolxptrivias/pix/Trivia_on.png';
-                                                    } else if ($quizdata->quiztype == 'assessments') {
-                                                        $iconurl = $CFG->wwwroot .
-                                                            '/local/leeloolxptrivias/pix/Assessments_on.png';
-                                                    } else if ($quizdata->quiztype == 'quest') {
-                                                        $iconurl = $CFG->wwwroot . '/local/leeloolxptrivias/pix/Quest_on.png';
-                                                    } else if ($quizdata->quiztype == 'mission') {
-                                                        $iconurl = $CFG->wwwroot . '/local/leeloolxptrivias/pix/Mission_on.png';
-                                                    } else if ($quizdata->quiztype == 'duels') {
-                                                        $iconurl = $CFG->wwwroot . '/local/leeloolxptrivias/pix/Duelos_on.png';
-                                                    } else {
-                                                        $iconurl = $cm->get_icon_url() . '?default';
-                                                    }
+                                                    $iconurl = $CFG->wwwroot . '/local/leeloolxptrivias/pix/' . $quizdata->quiztype . '.png';
                                                 } else {
                                                     $iconurl = $cm->get_icon_url() . '?default';
                                                 }
