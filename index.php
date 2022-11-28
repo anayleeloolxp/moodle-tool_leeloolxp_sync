@@ -1529,6 +1529,14 @@ if (isset($reqresyncactivity)) {
 
     $modulegeneraldata = $DB->get_record('course_modules', array('id' => $activityid));
 
+    $sequencetempdata = $DB->get_record('course_sections', array('id' => $modulegeneraldata->section));
+
+    $sequence = '';
+
+    if (!empty($sequencetempdata) && !empty($sequencetempdata->sequence)) {
+        $sequence = $sequencetempdata->sequence;
+    }
+
     $post = [
 
         'activity_id' => $activityid,
@@ -1566,6 +1574,10 @@ if (isset($reqresyncactivity)) {
         'groupmode' => $modulegeneraldata->groupmode,
 
         'groupingid' => $modulegeneraldata->groupingid,
+
+        'section_id' => $modulegeneraldata->section,
+
+        'sequence' => $sequence,
 
     ];
 
@@ -1892,6 +1904,8 @@ if (isset($reqresync)) {
                                                 'groupmode' => $modulegeneraldata->groupmode,
 
                                                 'groupingid' => $modulegeneraldata->groupingid,
+
+                                                'section_id' => $modulegeneraldata->section,
                                             );
                                     } // Loop close for activity and resources.
                                 } // If close for module_detail.
