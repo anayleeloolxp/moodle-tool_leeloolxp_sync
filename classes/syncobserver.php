@@ -1368,12 +1368,12 @@ class syncobserver {
         left join {modules} module on module.name = gi.itemmodule
         left join {course_modules} cm on cm.course = gi.courseid
         AND cm.module = module.id AND cm.instance = gi.iteminstance
-        where gg.id > ? ";
+        where gg.id > ? limit 100";
             $gradegradesdata = $DB->get_records_sql($sql, [$gradegradesid]);
 
             $sql = "SELECT cc.*,u.email  FROM {course_completions} cc
         left join {user} u on cc.userid = u.id
-        where cc.id > ? ";
+        where cc.id > ?  limit 100";
             $coursecompletedata = $DB->get_records_sql($sql, [$coursecompleteid]);
 
             $postdata = '&coursecompletedata=' . json_encode($coursecompletedata) .
